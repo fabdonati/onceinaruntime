@@ -1,0 +1,2 @@
+# Install in a project virtual environment. Retained runs record the resolved version.
+matplotlib>=3.10,<4

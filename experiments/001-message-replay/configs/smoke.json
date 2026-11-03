@@ -1,0 +1,13 @@
+{
+  "messages": 100000,
+  "topics": 64,
+  "payload-bytes": 48,
+  "selected-topics": 1,
+  "selection-offset": 0,
+  "seed": 20261101,
+  "begin": 0,
+  "end": 100000,
+  "hot-topic": 0,
+  "warmups": 2,
+  "repetitions": 8
+}

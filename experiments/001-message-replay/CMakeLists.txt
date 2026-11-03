@@ -1,0 +1,15 @@
+add_library(replay src/replay.cpp)
+target_include_directories(replay PUBLIC src)
+target_link_libraries(replay PUBLIC measured_options)
+
+add_executable(replay_bench src/benchmark.cpp)
+target_link_libraries(replay_bench PRIVATE replay)
+set_target_properties(replay_bench PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+if(BUILD_TESTING)
+    add_executable(replay_tests tests/replay_tests.cpp)
+    target_link_libraries(replay_tests PRIVATE replay)
+    add_test(NAME replay_correctness COMMAND replay_tests)
+    add_test(NAME replay_rejects_invalid_range COMMAND replay_bench --messages 10 --begin 9 --end 2)
+    set_tests_properties(replay_rejects_invalid_range PROPERTIES WILL_FAIL TRUE)
+endif()

@@ -2,21 +2,21 @@
 
 *A C++ experiment about replaying trading rules, arranging data, and the work behind a parameter search.*
 
-> Working draft, 15 November 2026. The C++23 layout example is compiled and checked; the backtest engine and performance measurements are still pending. Figure previews contain fictional values. Bracketed result and dataset passages remain open.
+> Working draft, 16 November 2026. The implementation, independent checks and 576-observation main campaign are complete. Figures use checked synthetic outputs and retained measurements. Host load increased during timing; the conclusions below are scoped to this run and these workloads.
 
 ## One rule, quite a few settings
 
 Suppose you have a trading rule simple enough to explain over coffee: hold a stock while its recent trend looks stronger than its longer-term trend, and sit out when that changes. Before getting too attached to it, you would probably want to try a few settings. How recent is recent? How long should the longer trend be?
 
-Those two choices give us a grid to explore. With 48 possible settings for our smoothed price, there are 1,128 ways to choose a shorter and a longer one. Each pair gives us a version of the same rule, all looking at the same market history. The computer is perfectly happy to keep trying; deciding what to make of the results is our problem.
+Those two choices give us a grid to explore. With 48 possible settings for our smoothed price, there are 1,128 ways to choose a shorter and a longer one. Each pair gives us a version of the same rule, all looking at the same price history. The computer is perfectly happy to keep trying; deciding what to make of the results is our problem.
 
 This is where my interest in trading meets the sort of question I can investigate in C++. The straightforward implementation is to pick a pair, replay the history, save the result, and move on to the next pair. But we could also read the first market event, update every version of the strategy, and then move to the next event. Each strategy would still see its own history in order. We would be taking a different route through the same work.
 
 I want to find out what that route costs once each strategy has an account to update and some results to produce. There is also a second choice underneath the loops: how the values they read are arranged in memory. C++23's `mdspan` gives us a way to make that choice explicit without changing the coordinates we use to access them.
 
-**[FIGURE 1 — A thousand versions of one rule]**
+![A triangular grid of checked account returns on an explicitly synthetic price path.](figures/01-synthetic-accounts.png)
 
-[Place the triangular fast/slow parameter heatmap here once it is backed by checked results and an identified dataset. Each tile is one configuration's net return over the same period. The current preview is fictional and cannot fill this slot as a result.]
+*Each tile is one account using a different fast/slow pair. These are computed results on an invented 32,768-bar price path, with the same fees and warm-up throughout. The generator includes alternating drift; the blue regions describe that artificial example. They say nothing about whether this rule would make money in a market.*
 
 ## Give each strategy its own little account
 
@@ -27,7 +27,7 @@ EMA[t] = alpha * close[t] + (1 - alpha) * EMA[t - 1]
 alpha  = 2 / (span + 1)
 ```
 
-A shorter span gives the latest price more weight, so its average reacts more quickly. Our rule holds the asset when the fast average is above the slow one, and holds cash otherwise. A 10-bar/30-bar pair and a 12-bar/40-bar pair are two configurations. A bar is one time interval with an opening and closing price; the interval for the eventual market example is still to be selected.
+A shorter span gives the latest price more weight, so its average reacts more quickly. Our rule holds the asset when the fast average is above the slow one, and holds cash otherwise. A 10-bar/30-bar pair and a 12-bar/40-bar pair are two configurations. A bar is one time interval with an opening and closing price. Here the bars are generated time steps, with no claim that they reproduce a particular market or trading interval.
 
 Each configuration gets its own simulated account. They share the price history and indicator values, but each has its own cash, holding and record of what happened. This independence is what will let us rearrange their updates. If two strategies competed for the same cash or the same available fill, changing their order could change the answer.
 
@@ -35,39 +35,43 @@ There is one timing detail to get right before worrying about the computer's clo
 
 For example, suppose an account has 1,000 in cash and its previous signal says to buy. At an opening price of 100, it buys 10 shares if we temporarily ignore fees. If the close is 102, the account is worth 1,020. A sell signal calculated from that close will wait until the following open. If it opens at 99, those shares sell for 990. The overnight move belongs in the result; rearranging our loops must preserve it too.
 
-The checked engine will use a small explicit proportional fee, fractional holdings, and a final liquidation rule. The fee-free numbers above are just a hand-worked illustration. The [experiment brief](brief.md) fixes the accounting details so that all four implementations do the same job.
-
-[DATASET — Select and document one instrument, provider, period, bar interval and price convention before producing a market-return heatmap. Deterministic synthetic input comes first for correctness; it will be labelled synthetic wherever used.]
+The checked engine charges one basis point on each side, allows fractional shares, and sells any remaining holding at the final close. With the fee included, our little account buys about 9.999 shares and finishes with 989.80. The fee-free numbers above make the sequence easier to follow; the [runnable five-bar example](examples/account.md) shows the full arithmetic. The [experiment brief](brief.md) fixes these rules for all four implementations.
 
 ## Two ways to walk through the work
 
 Imagine a spreadsheet with market events down the rows and strategy configurations across the columns. We can finish one column before starting the next, or finish one row before moving down. Either way, every individual strategy travels from the top of its column to the bottom.
 
-The strategy-first route keeps one account in hand while it works through the history. The event-first route keeps returning to a collection of accounts while advancing through the market events. That gives us a plausible tradeoff to examine: access to the market features on one side, and access to strategy state on the other. We have not yet measured which matters more.
+The strategy-first route keeps one account in hand while it works through the history. The event-first route keeps returning to a collection of accounts while advancing through the market events. That gives us a tradeoff to examine: access to the market features on one side, and access to strategy state on the other.
 
-**[FIGURE 2 — Two routes, then two storage layouts]**
+![Strategy-first visits columns; event-first visits rows. Separate memory strips show the two feature layouts.](previews/figures/02-traversal-and-layout.png)
 
-[Keep the traversal schematic: blue down the strategy columns, red across the event rows. Below it, explain the separate feature table and its two storage orders. Logical traversal arrows are not elapsed-time traces.]
+*Both routes preserve time order inside each account. The upper grids show strategy updates; the lower strips show a different table, the shared EMA features. The arrows describe logical operations, not elapsed time.*
 
-The two loop nests look like this. `step` will contain the same accounting in both; this is still engine pseudocode:
+Here is a simplified version of the implemented loops. `step` contains the same accounting in both. Notice the `t - 1`: that is the completed close whose signal can trade at the current open.
 
 ```cpp
 for (std::size_t s = 0; s < configs.size(); ++s) {
+    auto state = states[s];
+    const auto config = configs[s];
     for (std::size_t t = first_bar; t < bars.size(); ++t) {
-        step(states[s], configs[s], bars[t],
-             features[t, configs[s].fast], features[t, configs[s].slow]);
+        const bool target = features[t - 1, config.fast]
+                          > features[t - 1, config.slow];
+        step(state, target, bars[t], t + 1 == bars.size(), rules);
     }
+    states[s] = state;
 }
 
 for (std::size_t t = first_bar; t < bars.size(); ++t) {
     for (std::size_t s = 0; s < configs.size(); ++s) {
-        step(states[s], configs[s], bars[t],
-             features[t, configs[s].fast], features[t, configs[s].slow]);
+        const auto config = configs[s];
+        const bool target = features[t - 1, config.fast]
+                          > features[t - 1, config.slow];
+        step(states[s], target, bars[t], t + 1 == bars.size(), rules);
     }
 }
 ```
 
-Before either loop starts, we will calculate each distinct EMA once. Many pairs reuse the same average, so recalculating it for every strategy would make the comparison unnecessarily expensive. Both traversal orders get the same shared feature values and produce a result for every configuration, in the same configuration order.
+Before either loop starts, we calculate each distinct EMA once. Many pairs reuse the same average, so recalculating it for every strategy would make the comparison unnecessarily expensive. Both traversal orders get the same shared feature values and produce a result for every configuration, in the same configuration order. The first route keeps its current account local until its history is finished; the second keeps returning to the account array.
 
 ## The other table, and where `mdspan` fits
 
@@ -112,32 +116,44 @@ That leaves four combinations:
 
 The state representation, strategy ordering and arithmetic stay fixed. This lets us ask about traversal and layout separately. `mdspan` is how we express the layout choice here; there is no raw-pointer-versus-view comparison, and no assumed SIMD benefit.
 
-## What we will measure
+## Check the accounts before timing the loops
 
-First we need to check the decisions, holdings, trade counts and numerical summaries against an independent reference. Matching the final return alone would leave too much room for two different histories to happen to end at the same number. Small fixtures will include an overnight gap, equality between indicators, no trades, and a position still open at the end.
+Before trusting a timer, we need to trust the accounts. Small fixtures now check every decision, holding, fee and equity mark against a separate Python transaction ledger. Matching the final return alone would leave too much room for two different histories to happen to end at the same number. These cases include an overnight gap, equality between indicators, no trades, and a position still open at the end. Changing a bar's close also has its own check: it must leave that bar's opening decision alone.
 
-Then we can time a complete replay and divide by the number of configurations times the number of eligible bars. That gives us nanoseconds per strategy-bar: the cost of updating one configuration for one event, averaged over the replay. It is a throughput measure derived from the full interval, not the latency of an individual market event.
+All four C++ variants produced identical outputs in those checks. The larger untimed runs also matched the independent summaries at 4,096 and 32,768 bars, three synthetic input seeds, and 64, 256 or 1,128 configurations. The [reproduction guide](benchmark.md) records the precise checks and floating-point tolerance. With that foundation in place, we can look at the timings.
 
-**[FIGURE 3 — What does one strategy-bar cost?]**
+The primary interval covers replay and construction of the ordered summaries. Dividing by the number of configurations times the number of eligible bars gives us nanoseconds per strategy-bar: the cost of updating one configuration for one event, averaged over the replay. It is a throughput measure derived from the full interval, not the latency of an individual market event.
 
-[Two panels, one per physical feature layout. Configuration count K on the horizontal axis; replay nanoseconds per strategy-bar vertically. Blue strategy-first, red event-first. Hold history length N and feature population W fixed within a comparison. Retain matched process observations and define the descriptive center. No assumed crossover or smoothed confidence band.]
+![Measured strategy-bar cost for both history lengths and both feature layouts, showing individual observations and medians by input seed.](figures/03-replay-cost-main.png)
 
-[RESULTS — Report the observed ordering and variation, including an unresolved difference if that is what we find. Inspect the measured build's compiler diagnostics before discussing vectorization. Timings alone will not identify cache misses or bandwidth limits.]
+*Each dot is one fresh process. Lines join eight-run medians within each seed, across the three measured configuration counts. All 48 feature windows are present at every count. The 576 observations are retained, including slower ones.*
 
-I also want the complete-run cost: preparing the features in the required storage order, setting up the accounts, replaying the history, and producing the summaries. A layout that helps the replay may take work to prepare. Whether it is useful depends partly on how often that preparation can be reused.
+The ordering changes with the storage layout. With an indicator's history together, strategy-first has the lower median in every tested workload and seed. With an event's indicator snapshot together, event-first has the lower median. Across all four combinations, strategy-first/history is lowest in all eighteen workload/seed cells.
 
-**[OPTIONAL FIGURE 4 — What did the whole run cost?]**
+For one concrete case, 32,768 bars and 1,128 configurations on seed 11, the median prepared intervals are about 31.75 ms for strategy-first/history and 82.56 ms for event-first/history. With snapshot storage, the corresponding medians are 58.55 and 42.54 ms. Changing the loop order without asking how its input is stored would miss the reversal.
 
-[Include the four stage breakdowns only if preparation changes the practical interpretation. Derive stages from the same complete intervals; otherwise report whole-run totals in a small table. Record memory and any conversion scratch separately.]
+These are observations from my Apple M3 setup, with an important limit. The run started after a full minute of low recorded load, but the system's one-minute load average later rose from 2.27 at entry to 36.12. CPU placement and frequency were uncontrolled. The dots show the observed spread; this experiment does not promise those timings on an isolated machine, another processor or a live trading system.
+
+The compiler report also helps keep the explanation honest. GCC 16.2 reports no loop vectorization in the replay function, while identifying some vectorized basic-block operations. We have evidence for the layout-dependent ordering here. Explaining it specifically through cache misses, memory bandwidth or SIMD would require more evidence.
+
+I also want the complete computation cost: preparing the features in the required storage order, setting up the accounts, replaying the history, and producing the summaries. The clock starts with already-parsed bars and stops before writing CSV files. A layout that helps the replay may take work to prepare. Here, snapshot storage needs a conversion from the shared canonical feature table, with an extra allocation during that conversion. Whether that cost is useful depends partly on how often the prepared features can be reused.
+
+![Complete computation cost at 32,768 bars and 64 configurations, with preparation and replay shown separately.](figures/04-whole-run-main.png)
+
+*The largest history and smallest sweep make the preparation bill visible. Each stack is one actual run nearest its group's median total; ticks show all eight complete-run totals. Blue and red identify the traversal; gray segments show preparation. Input parsing and CSV writing are outside this interval.*
+
+At 64 configurations on the same seed, strategy-first/history and event-first/snapshot have median prepared intervals of about 2.62 and 2.93 ms. Include preparation and those medians become 6.38 and 9.94 ms. The preparation choice matters much more when fewer accounts share its cost. Snapshot conversion also temporarily needs another feature matrix: at this history length, that is an extra 12 MiB. A different preparation algorithm or an already prepared snapshot would change this bill; neither was varied in this comparison.
 
 ## What this could change in a research tool
 
-The useful outcome would be a reason to organize an independent parameter sweep one way under a stated workload. That could help when trying settings for a signal or replaying scenarios in a research application. A shared portfolio or an execution simulator with competition for fills would need its dependencies examined before applying the same loop transformation.
+For this bounded parameter-sweep tool, strategy-first with history-contiguous features is the starting point supported by the measured medians. If a surrounding application already provides snapshot-contiguous features, the comparison within that layout favors event-first. Whether to pay for a conversion is a separate question involving preparation and reuse. This is the sort of choice that comes up when trying signal settings or replaying scenarios in a research application.
 
-Making these runs faster also makes it easier to try more settings until something looks convincing. Our parameter heatmap will describe one chosen history. It will not establish that its brightest tile is a good strategy for the next one. Bailey and colleagues discuss this selection problem in [*The Probability of Backtest Overfitting*, February 2015](https://www.davidhbailey.com/dhbpapers/backtest-prob.pdf).
+A shared portfolio or an execution simulator with competition for fills would need its dependencies examined before applying the same loop transformation. Our freedom to rearrange the work comes from independent accounts reading shared, immutable inputs.
 
-[CONCLUSION — Follow the measured outcome: a workload/layout-dependent advantage, little material difference, or a replay gain absorbed by preparation. Explain the supported implementation choice and its conditions. No winner is written in advance.]
+Making these runs faster also makes it easier to try more settings until something looks convincing. Even on observed market prices, a parameter heatmap describes the chosen history. Its brightest tile does not establish a good strategy for the next one. Bailey and colleagues discuss this selection problem in [*The Probability of Backtest Overfitting*, February 2015](https://www.davidhbailey.com/dhbpapers/backtest-prob.pdf).
 
-## Reproduction details to complete
+The useful lesson for me is to make the traversal and storage decisions together, then count the preparation that makes them possible. `mdspan` lets the code state those storage choices through the same logical coordinates. The account checks tell us whether we still did the same financial work; the measurements tell us what that particular route cost under the recorded conditions.
 
-[Engine/data revision; provider, period and price convention; accounting contract; host/compiler/flags; N/K/W and common warm-up; bytes and timing boundaries; independent correctness outcomes; retained individual observations; exact reproduction commands. Only the layout example has run so far.]
+## Reproducing the experiment
+
+The [reproduction guide](benchmark.md) includes build commands, accounting checks, frozen pilot/main matrices, timing boundaries and memory accounting. The [findings](findings.md) and [individual observations](results/README.md) record outcomes and limits. C++ uses GCC 16.2 with `-O3 -fno-fast-math -ffp-contract=off` for the release build; debug and sanitizer checks are separate. All accounts share a 96-bar warm-up, with 48 windows held fixed while the nested configuration set grows. The input generator, seeds, reference summaries, actual source/build hashes and every process observation are retained.

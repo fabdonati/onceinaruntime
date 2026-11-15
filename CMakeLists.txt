@@ -31,7 +31,7 @@ if(OIR_BARRIER_SIMD)
     add_subdirectory(studies/barrier-options)
 endif()
 
-option(OIR_STRATEGY_EXAMPLES "Build the C++23 strategy-layout walkthrough" ON)
+option(OIR_STRATEGY_EXAMPLES "Build the C++23 strategy study and layout walkthrough" ON)
 if(OIR_STRATEGY_EXAMPLES)
     add_subdirectory(studies/strategy-loop)
 endif()

@@ -13,7 +13,7 @@ Articles and subscriptions: [Once in a Runtime](https://onceinaruntime.substack.
 | Study | Working material |
 | --- | --- |
 | [Barrier options and SIMD](studies/barrier-options/README.md) | Checked C++ implementation, measured main study, article draft and prepared float/double extension. |
-| [One market, a thousand strategies](studies/strategy-loop/README.md) | Expanded draft, accounting contract and checked C++23 layout example. Backtest engine and timings are pending; preview values are fictional. |
+| [One market, a thousand strategies](studies/strategy-loop/README.md) | Four checked C++23 variants, independent accounting reference, 192-observation pilot and 576-observation main campaign, charts and complete draft. Host-load limits are documented. |
 
 Each study's README records its status and next step. Manuscripts on `main` are
 work in progress; their presence does not mean an article has been published.
@@ -24,7 +24,7 @@ Stable folder names are independent of publication order.
 The implemented study uses C++20, CMake 3.21+, Make, Python 3.10+, NumPy and
 Matplotlib. Its `<experimental/simd>` interface requires a supporting compiler
 and standard library. The checked local route is GCC 16.2/libstdc++.
-The strategy layout example uses C++23 `mdspan` and is checked on the local GCC
+The strategy study uses C++23 `mdspan` and is checked on the local GCC
 route. The barrier implementation remains C++20.
 
 ```sh
@@ -43,12 +43,13 @@ supporting compiler in a fresh build directory, override it, for example
 `cmake --preset debug -DCMAKE_CXX_COMPILER=g++`. The local Python environment is
 used automatically when present; otherwise set `Python3_EXECUTABLE` explicitly.
 Set `OIR_STRATEGY_EXAMPLES=OFF` for a compiler without C++23 `mdspan`; the C++20
-barrier checks remain available. CI enables the layout example on its Homebrew
+barrier checks remain available. CI enables the strategy study on its Homebrew
 GCC route, while the Linux system-GCC jobs check the barrier study and analysis.
 
 Only release builds are used for timing. See the
 [barrier reproduction guide](studies/barrier-options/environment.md) and
-[precision run guide](studies/barrier-options/precision/README.md).
+[precision run guide](studies/barrier-options/precision/README.md), or the
+[strategy run guide](studies/strategy-loop/benchmark.md).
 CI checks correctness and analysis, without timing campaigns.
 
 ## Publication

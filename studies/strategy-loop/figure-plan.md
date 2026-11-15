@@ -1,6 +1,6 @@
 # Article and figure plan
 
-Prepared 15 November 2026. Preliminary writing/visual proposal only. The standalone layout example has since passed local compiler/sanitizer checks; no strategy simulation or benchmark has run. `previews/figures/` contains explicitly fictional layout previews. These are separate from all retained barrier results.
+Updated 16 November 2026. The engine and independent accounting checks now pass, including the untimed scale matrix. The article contains a checked synthetic account heatmap and the traversal schematic. The completed 576-observation main run supplies performance charts, with the recorded host-load limitation beside the claims. `previews/figures/` contains the earlier fictional return/timing designs; the traversal image is separately labelled schematic.
 
 ## Editorial question
 
@@ -25,11 +25,11 @@ Aim for about 1,400–1,800 final words, depending on the findings. No introduct
 ## Bounded comparison proposal
 
 - One asset, one documented price history, a simple independent long/cash EMA-cross rule, double throughout.
-- Suggested grid: approximately 48 distinct EMA spans, valid fast < slow combinations (1,128 at the full grid). This is a proposed workload, not an implemented count or frozen parameter set.
+- Implemented grid: 48 distinct EMA spans, 2..96 by 2, with 1,128 valid fast < slow combinations. The bounded synthetic pilot matrix is frozen in `configs/pilot.json`; the separate main campaign completed 576 observations.
 - Precompute each distinct EMA once. All variants use identical canonical feature values. No route gets a more efficient indicator algorithm or a different warm-up.
 - Logical feature dimensions: [bar, indicator window]. History-contiguous means bar stride 1 (`layout_left`); snapshot-contiguous means window stride 1 (`layout_right`). Layout changes require correct physical materialization, not reinterpretation of the same bytes.
 - Four variants: two traversal orders x two feature layouts. Within each layout compare traversal orders; within each order compare layouts. Keep the state structure and config ordering fixed.
-- C++23 is justified by mdspan for this new question. It does not alter the standard or build setup of any existing experiment. GCC 16 documentation lists mdspan support; the exact view and its strides now pass locally in `examples/layout.cpp`. Generated code for a backtest loop remains unexamined.
+- C++23 is justified by mdspan for this new question. It does not alter the standard or build setup of any existing experiment. GCC 16 documentation lists mdspan support; the exact view and its strides now pass locally in `examples/layout.cpp`. The actual engine now passes independent checks. Release compiler diagnostics report no loop vectorization in replay, alongside some vectorized basic-block operations; see `findings.md`.
 - Keep AoS/SoA, manual SIMD, threading, alternative strategies, precision comparisons and Ipopt out of the first experiment. Vectorization is an observed compiler outcome, not an assumed treatment.
 - Proposed workload variation: a small number of nested configuration counts K and two or three history lengths N. Define the feature population W and its usage explicitly; do not silently change W while attributing the result solely to K. Freeze a bounded matrix after an untimed preflight.
 - The common feature set models a reusable research input. For fresh-run totals disclose exactly which features are prepared, their materialization cost, and any reuse assumption. Do not compare one cold fresh run with another route's already-cached preprocessing.
@@ -48,7 +48,7 @@ Aim for about 1,400–1,800 final words, depending on the findings. No introduct
 | Financial outputs | Net period return, trade count, turnover and maximum drawdown under the frozen accounting contract | Output parity; only net return needs a main-text heatmap |
 | Correctness | Per-bar target/position/trade trace and per-config result checks against an independent small reference | Required outside timed paths; final P&L alone can hide divergent paths |
 
-For a future equity sequence E_t > 0: net return = E_end/E_start - 1; maximum drawdown = max_t(1 - E_t / max_{u<=t} E_u). Define turnover as sum of absolute traded notional divided by fixed initial capital, if this is the chosen account model. Trading-event counts must define entries/exits separately from round trips. The working accounting, fee, warm-up and liquidation rules are now in `brief.md`; implement and independently check them before producing metrics.
+For a future equity sequence E_t > 0: net return = E_end/E_start - 1; maximum drawdown = max_t(1 - E_t / max_{u<=t} E_u). Define turnover as sum of absolute traded notional divided by fixed initial capital, if this is the chosen account model. Trading-event counts must define entries/exits separately from round trips. The accounting, fee, warm-up and liquidation rules in `brief.md` are implemented and independently checked. The pilot and main campaign retain all individual timing observations; see findings for the rising-load limitation.
 
 No Sharpe-ratio ranking, p99 timing claim, annualized extrapolation or probabilistic uncertainty band is needed for the pilot. Cross-configuration outcomes share one market history and are not independent market samples. Timing repetitions and input histories must also be identified separately.
 
@@ -60,7 +60,7 @@ No Sharpe-ratio ranking, p99 timing claim, annualized extrapolation or probabili
 - Invalid fast >= slow cells are blank, never encoded as a zero-return result.
 - A common diverging color scale centered at zero; label it explicitly as net period return. Blue/red here encode the signed financial outcome, separately from traversal colors in later figures.
 - Caption: context/output requirement, not evidence of a profitable strategy. Do not print a second identical map merely to show implementation agreement.
-- Real figure input: verified per-config results, frozen grid/data/accounting metadata. No real input exists yet.
+- Real figure input: verified per-config results, frozen grid/data/accounting metadata. The checked synthetic example is in `figures/`; no observed-market input is selected.
 
 ### 2. Two routes through the same work
 
@@ -76,7 +76,7 @@ No Sharpe-ratio ranking, p99 timing claim, annualized extrapolation or probabili
 - x: K, ordered settings, log scale if broad. y: ns/strategy-bar, lower is better. Fixed N and W within the panels.
 - Raw matched process observations plus a specified descriptive center. Lines join measured workload settings, not an inferred smooth law.
 - Use a second N only if it changes the practical decision. Do not mark an exact cache threshold from an apparent bend.
-- Real figure input: retained individual timing observations and complete provenance. No performance inputs exist yet.
+- Real figure input: retained individual timing observations and complete provenance. Main inputs are retained in `results/main-observations.csv`; eight observations per candidate/cell/seed, with load variation disclosed.
 
 ### 4. Optional: the whole bill
 
@@ -93,8 +93,8 @@ Follow the current `publication/visual-style.json`: warm paper #FCE9D7, ink #0F0
 
 ## Status and next step
 
-Status: expanded manuscript, working accounting contract and checked layout example. No backtest correctness, market-data processing or timing campaign exists. Barrier evidence is unchanged.
+Status: implemented four-variant engine, independent reference, sixteen strategy tests and passing debug/sanitizer/release checks. The main scale gate passed 72 untimed workers. The pilot completed 192 timing observations and the main run 576; every output check passed. The draft embeds checked accounts, the traversal schematic, the main timing chart and complete-cost chart. Load rose during both measured runs; this limits interpretation. Barrier evidence is unchanged.
 
-Next: implement the independent accounting reference and four equal-output variants against the working brief. Freeze the data and timing matrix only after deterministic correctness checks and untimed scale checks.
+Next: review the complete draft and figure sequence, keeping the load limitation beside numerical claims. Decide whether a better-isolated reproduction is needed before release. The current illustration remains synthetic; there is no missing market dataset for this version.
 
 Estimated total author effort: provisionally 15–22 hours including setup, reference checks, implementation, one bounded campaign, interpretation and writing. That is approximately 3–8 weeks at 3–5 hours/week. Reassess after the first small correctness/preflight milestone; this is not a publication-date commitment.

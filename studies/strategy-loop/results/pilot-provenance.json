@@ -1,0 +1,94 @@
+{
+  "input_manifest_sha256": "2abe0543ce96a55eb590e153846ac1ee628b8b5d3f78fdea0a7234c7b9499126",
+  "input_observations_sha256": "1e032879b7399e1054d9b35f4ab07042595a02e7f11509c9bd70d8fd97d98546",
+  "source_sha256": "7ab928acd5164baae904c554b357556b0cff44807a73edef3e36504bf382c849",
+  "style_sha256": "2a8b8af37bda1a3443a83cc679cc6b10e04955d930c20fc584d1f666c7416b84",
+  "python": "3.14.4 (main, Apr  7 2026, 13:13:20) [Clang 17.0.0 (clang-1700.6.4.2)]",
+  "numpy": "2.5.4",
+  "matplotlib": "3.11.2",
+  "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+  "headline_font": "Georgia",
+  "representative_ids": [
+    "n32768-s11-k64-r0-strategy-history",
+    "n32768-s11-k64-r1-event-history",
+    "n32768-s11-k64-r0-strategy-snapshot",
+    "n32768-s11-k64-r1-event-snapshot"
+  ],
+  "whole_run_workload_rule": "Largest N, smallest K, first seed; expose fixed preparation cost. Figure 3 retains the full matrix.",
+  "description": "Pilot only. Four fresh-process samples per cell and seed. No confidence intervals or market inference.",
+  "original_plot_record_sha256": "6e0f11b223cb2f6be4d8087727b543de040c66a0e7f1d414077440f828e53d6b",
+  "source_archive_sha256": "34bb0fbdc6fbf7e2fed1c6cf15587c41c0035d2c2780713c387e757b975eb702",
+  "binary_sha256": "8b964006f87411ceb5bb814945f96942e8ea885e85c85990a2c92486d47f2057",
+  "input_hashes": [
+    {
+      "bars": 4096,
+      "seed": 11,
+      "file_sha256": "bce8cb4ca8c885355d7bc02c5562d81ac509b2c5cbdcb2fbb6c8b70c85d3a77b",
+      "reference_sha256": "239ff7093b4c89d3ac4f6d355c159fec50ba8248b8c27c61eb9f7356e689ce2a"
+    },
+    {
+      "bars": 4096,
+      "seed": 29,
+      "file_sha256": "8f9700639ec846fb01b577226c64649459dac8f44be82b3a644dc91708e3d12d",
+      "reference_sha256": "40b7998604e20777e91619680c47d164e139444afd128865ed8b426440ffbf6a"
+    },
+    {
+      "bars": 32768,
+      "seed": 11,
+      "file_sha256": "5e537a8d95df93f30c0e44b999787f4796eaa8d4ca83ef908305c8eacb4394a3",
+      "reference_sha256": "81001ca7682ab3d653ebaae86f897ae71593d882295ddbbd797f9d23a2494aea"
+    },
+    {
+      "bars": 32768,
+      "seed": 29,
+      "file_sha256": "845d47cc734ab4d993a919a14e2e6459875ed74b0cb0d12dccfb2732403b6e79",
+      "reference_sha256": "42d061366f954da8c737604701e183fbf20915db767bdaa1838f340de82d6a17"
+    }
+  ],
+  "base_revision": "03efc2c263aefc4a4582cd5e4e89e352eb395f27",
+  "base_revision_has_uncommitted_implementation": true,
+  "host": {
+    "cpu": "Apple M3",
+    "ram_bytes": 17179869184,
+    "logical_cpus": 8,
+    "os": "macOS 15.6.1 arm64",
+    "cpu_query": "Read-only follow-up; in-run sandbox failure retained."
+  },
+  "entry_load": 3.95361328125,
+  "maximum_recorded_load": 12.630859375,
+  "final_load": 12.630859375,
+  "power_samples": 50,
+  "timer": {
+    "steady": true,
+    "pairs": 10000,
+    "zero_or_negative": 9960,
+    "minimum_positive_ns": 1000,
+    "median_positive_ns": 1000
+  },
+  "interpretation": "Exploratory pilot. Load increased. No sample replacement and no main campaign completed.",
+  "export_hashes": {
+    "results/pilot-observations.csv": "0e2442656f319d56c13ff41c48d4e9a8a14104ffbb53299784faabe62ce90963",
+    "results/pilot-groups.csv": "09984f6e07e2a3f7d9d736c265dc39f6745df304e147752f085f4510a73f73ea",
+    "figures/04-whole-run-pilot.png": "b7db5fdb0ee3138f1fca6c3a83ef20a746dd6638336a325e007dbacf1a76294a",
+    "figures/03-replay-cost-pilot.svg": "13d2b4a13d716dce51f4fcf8ed5d667333bcfca9a7283e67abcf6264f354769c",
+    "figures/03-replay-cost-pilot.png": "4ccc4bc7c60f60ec425bafc90f4a5983f328c7e6d0c6903a934f5c3425d6f373",
+    "figures/04-whole-run-pilot.svg": "b24cb387e1da936b257012dce8c554f3b9f4b5636deeb9e88ca675db5c85b0c7"
+  },
+  "measured_source_sha256": {
+    "CMakeLists.txt": "88c9cb359b4d551629470d43026402732f76d70c7f388ff8789049511b5d73cd",
+    "CMakePresets.json": "35eb5fe2a02fe2b0a03900aae9102c6011a48baae2f649aa2782087f26d06bc1",
+    "studies/strategy-loop/CMakeLists.txt": "d891cb07195a4d8931b664d415c0ef05dd1065cbd54844521b4b9746dffc2890",
+    "studies/strategy-loop/analysis/inputs.py": "e0a4ccf1c462deb1df257c405617c1ff79e0f4679aa52dc30c81b4be8fe63053",
+    "studies/strategy-loop/analysis/plot.py": "1d264210f05896fbdc14a8da13f773a4d193f3a4b5f22572fc28731325e88f3c",
+    "studies/strategy-loop/analysis/reference.py": "88df76b9841eefb2cdbd42cbd62eaa3046723bca923bbb8ee1e6b910e8ca6728",
+    "studies/strategy-loop/analysis/run.py": "467a7c8b2cc9f96d2426e0ce2b3dff3f002d4007f67937cdad73fb6ab37e5b58",
+    "studies/strategy-loop/configs/pilot.json": "f7e49bb26d751fea07cacf2d37f75b99cf08d65ca855999279f0b8f495d54c86",
+    "studies/strategy-loop/src/main.cpp": "e7261756d0973c9548cb67606c2bf2731e7501dbbf74581659c3c6ce126a07a1",
+    "studies/strategy-loop/src/replay.cpp": "685f207e5a8a14a37c4e9847f7f73f81976daeeb8dde5650bbd464aee7a0134c",
+    "studies/strategy-loop/src/replay.hpp": "0833bff67039b5996dfa3c74bc275e746d2904f8cd37afc03323c2b3bb99599c",
+    "studies/strategy-loop/tests/test_engine.py": "8cc59dd6f85c551bb6c236ebfb56651fc944e9c606e6d97a74d0f3a807d0c73b",
+    "studies/strategy-loop/tests/test_reference.py": "83558dd713203df3d5ef9cb39141a1e246a089cbb27b5041adccc2a236472469",
+    "studies/strategy-loop/tests/test_runner.py": "2a96f1a8ff77653b4fa8e61619f99fa677cb6fa79b059bcc24d685f40327676a"
+  },
+  "svg_export_note": "Trailing XML whitespace normalized for Git; original generated SVGs retained privately, numeric data and PNGs unchanged."
+}

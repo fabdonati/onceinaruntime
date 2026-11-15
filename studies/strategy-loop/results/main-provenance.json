@@ -1,0 +1,109 @@
+{
+  "input_manifest_sha256": "5d68049481d7d497227a3a5e616f1e3959e8300af9dec9f480c8650d340638cc",
+  "input_observations_sha256": "848ef89345718d3089072239b0a55dafb56a7cfaf2dbd126e34ef53b5c07be72",
+  "source_sha256": "927a797ac5db29d5989bab2c3a1724c85f0363492881a220568f3dbb85045d9f",
+  "style_sha256": "2a8b8af37bda1a3443a83cc679cc6b10e04955d930c20fc584d1f666c7416b84",
+  "python": "3.14.4 (main, Apr  7 2026, 13:13:20) [Clang 17.0.0 (clang-1700.6.4.2)]",
+  "numpy": "2.5.4",
+  "matplotlib": "3.11.2",
+  "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+  "headline_font": "Georgia",
+  "representative_ids": [
+    "n32768-s11-k64-r0-strategy-history",
+    "n32768-s11-k64-r4-event-history",
+    "n32768-s11-k64-r2-strategy-snapshot",
+    "n32768-s11-k64-r1-event-snapshot"
+  ],
+  "whole_run_workload_rule": "Largest N, smallest K, first seed; expose fixed preparation cost. Figure 3 retains the full matrix.",
+  "description": "MAIN RUN. 8 fresh-process samples per cell and seed. No confidence intervals or market inference.",
+  "original_plot_record_sha256": "516467d9a08bb88216a2602618694ffd15516848ed26f179774430f19134b6f7",
+  "source_archive_sha256": "c5fd43339ae0b7fe8809c6c86d50c05ed32680a18d1d9c83eabea5960f0586ee",
+  "binary_sha256": "8b964006f87411ceb5bb814945f96942e8ea885e85c85990a2c92486d47f2057",
+  "input_hashes": [
+    {
+      "bars": 4096,
+      "seed": 11,
+      "file_sha256": "bce8cb4ca8c885355d7bc02c5562d81ac509b2c5cbdcb2fbb6c8b70c85d3a77b",
+      "reference_sha256": "239ff7093b4c89d3ac4f6d355c159fec50ba8248b8c27c61eb9f7356e689ce2a"
+    },
+    {
+      "bars": 4096,
+      "seed": 29,
+      "file_sha256": "8f9700639ec846fb01b577226c64649459dac8f44be82b3a644dc91708e3d12d",
+      "reference_sha256": "40b7998604e20777e91619680c47d164e139444afd128865ed8b426440ffbf6a"
+    },
+    {
+      "bars": 4096,
+      "seed": 47,
+      "file_sha256": "863a2a3f4b9fc6ac7bf2aa6e2871d69280beed065f5e558b6d727c3438ba4819",
+      "reference_sha256": "321a4ca4599487f1a3c6d6874e8c8a64f23a3148be4aeed072ed3559102a3139"
+    },
+    {
+      "bars": 32768,
+      "seed": 11,
+      "file_sha256": "5e537a8d95df93f30c0e44b999787f4796eaa8d4ca83ef908305c8eacb4394a3",
+      "reference_sha256": "81001ca7682ab3d653ebaae86f897ae71593d882295ddbbd797f9d23a2494aea"
+    },
+    {
+      "bars": 32768,
+      "seed": 29,
+      "file_sha256": "845d47cc734ab4d993a919a14e2e6459875ed74b0cb0d12dccfb2732403b6e79",
+      "reference_sha256": "42d061366f954da8c737604701e183fbf20915db767bdaa1838f340de82d6a17"
+    },
+    {
+      "bars": 32768,
+      "seed": 47,
+      "file_sha256": "9eb5fa049b7a1a10c806c07a606abe40b67587936e15accc6445b394f6729882",
+      "reference_sha256": "ab613fbdb2a800247bbf78ed65b56a27d25d98a55fa2e1a7a1983dd27f6c26ce"
+    }
+  ],
+  "base_revision": "03efc2c263aefc4a4582cd5e4e89e352eb395f27",
+  "base_revision_has_uncommitted_implementation": true,
+  "host": {
+    "cpu": "Apple M3",
+    "ram_bytes": 17179869184,
+    "logical_cpus": 8,
+    "os": "macOS 15.6.1 arm64",
+    "cpu_query": "Read-only follow-up to pilot; original in-run sandbox failures retained."
+  },
+  "initial_pre_wait_load": 29.2783203125,
+  "entry_load": 2.27392578125,
+  "maximum_recorded_measurement_load": 36.11572265625,
+  "final_load": 36.11572265625,
+  "quiet_wait_seconds": 240.3876879159361,
+  "power_samples": 163,
+  "timer": {
+    "steady": true,
+    "pairs": 10000,
+    "zero_or_negative": 9975,
+    "minimum_positive_ns": 1000,
+    "median_positive_ns": 1000
+  },
+  "interpretation": "Complete fixed matrix. Load rose after quiet entry; descriptive within-run comparisons only. All observations retained.",
+  "export_hashes": {
+    "results/main-observations.csv": "8109c2440749c162e1a5007ac8c1152961fb3043050e634490900e6b5ee6c8e5",
+    "results/main-groups.csv": "13249002483bd0585ecc2ae5c06ac00fc72f64e500152e0ad975b1f125d0263a",
+    "figures/04-whole-run-main.png": "60f906fe4a705f976384acee8bc7a5e73d3c08745baec7bf6f9e5b699b2a5092",
+    "figures/04-whole-run-main.svg": "f6006630af207d5214ed8e83f0cd7194779e336628a1958755f36ecda66b15a8",
+    "figures/03-replay-cost-main.png": "5ac7d4e64cc9b6e8ccd7b400ed1696851d4527f9a948d8916555f09c2c8dfadb",
+    "figures/03-replay-cost-main.svg": "a727e467e335a9cbdc02bb71653afe9cb1bc3f84ba4582cc6fbc3c1bda0611fb"
+  },
+  "measured_source_sha256": {
+    "CMakeLists.txt": "88c9cb359b4d551629470d43026402732f76d70c7f388ff8789049511b5d73cd",
+    "CMakePresets.json": "35eb5fe2a02fe2b0a03900aae9102c6011a48baae2f649aa2782087f26d06bc1",
+    "studies/strategy-loop/CMakeLists.txt": "d891cb07195a4d8931b664d415c0ef05dd1065cbd54844521b4b9746dffc2890",
+    "studies/strategy-loop/analysis/inputs.py": "e0a4ccf1c462deb1df257c405617c1ff79e0f4679aa52dc30c81b4be8fe63053",
+    "studies/strategy-loop/analysis/plot.py": "927a797ac5db29d5989bab2c3a1724c85f0363492881a220568f3dbb85045d9f",
+    "studies/strategy-loop/analysis/reference.py": "88df76b9841eefb2cdbd42cbd62eaa3046723bca923bbb8ee1e6b910e8ca6728",
+    "studies/strategy-loop/analysis/run.py": "d3cf08614fa7e98405ae2c3806384bf334cfeb3157132163b8da5914915d59f2",
+    "studies/strategy-loop/configs/main.json": "5d39e98e84f2cf53857f03d6b0f6fc29152cd25861b6db3087de461b8a85ba3c",
+    "studies/strategy-loop/configs/pilot.json": "f7e49bb26d751fea07cacf2d37f75b99cf08d65ca855999279f0b8f495d54c86",
+    "studies/strategy-loop/src/main.cpp": "e7261756d0973c9548cb67606c2bf2731e7501dbbf74581659c3c6ce126a07a1",
+    "studies/strategy-loop/src/replay.cpp": "685f207e5a8a14a37c4e9847f7f73f81976daeeb8dde5650bbd464aee7a0134c",
+    "studies/strategy-loop/src/replay.hpp": "0833bff67039b5996dfa3c74bc275e746d2904f8cd37afc03323c2b3bb99599c",
+    "studies/strategy-loop/tests/test_engine.py": "8cc59dd6f85c551bb6c236ebfb56651fc944e9c606e6d97a74d0f3a807d0c73b",
+    "studies/strategy-loop/tests/test_reference.py": "83558dd713203df3d5ef9cb39141a1e246a089cbb27b5041adccc2a236472469",
+    "studies/strategy-loop/tests/test_runner.py": "fc8c87a380daa2d8372a481a61710d72e0f9fb6edd9c46a35d6eec87a3fa3be1"
+  },
+  "svg_export_note": "Trailing XML whitespace normalized for Git; original generated SVGs retained privately, numeric data and PNGs unchanged."
+}

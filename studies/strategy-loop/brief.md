@@ -1,9 +1,13 @@
 # Strategy-loop investigation brief
 
-Status, 15 November 2026: article development and layout preflight underway.
-The C++23 layout example passes locally; no backtest engine or timing campaign
-exists yet. This brief selects working accounting defaults for the first
-correctness implementation. Historical data and the timing matrix remain open.
+Status, 16 November 2026: the accounting reference, four C++23 replay variants,
+full-trace fixtures and larger untimed summary checks pass. The accounting
+defaults below are implemented. A bounded synthetic timing pilot is frozen in
+[configs/pilot.json](configs/pilot.json) completed all 192 observations after an
+initial launch was held at the load gate. A separate frozen
+[main matrix](configs/main.json) completed 576 observations after its quiet entry
+gate passed. Background load rose during both runs; report the resulting limits.
+The current study uses identified synthetic input and no historical-market data.
 
 ## Question and contribution
 
@@ -26,7 +30,7 @@ HFT or trading-profitability claim follows from this replay experiment.
 - `EMA[0,w] = close[0]`. Thereafter `alpha=2/(span+1)` and
   `EMA[t,w]=alpha*close[t]+(1-alpha)*EMA[t-1,w]`, double throughout. Compute each
   distinct window once; every variant consumes identical feature values.
-- Distinct integer spans >=2, configurations fast<slow, stable lexicographic
+- Strictly increasing distinct integer spans >=2, configurations fast<slow, stable lexicographic
   order. Let L be the largest span in the common feature set. Use bars 0..L-1
   as common warm-up for every configuration, and first execute at open[L].
   The first pending signal comes from close[L-1]. No configuration gets extra
@@ -70,29 +74,36 @@ both physical mappings. Check feature identities independently before replays.
 Logical feature shape is [bar, window]. `layout_left` has offsets t+N*w;
 `layout_right` has t*W+w. Materialize buffers to match their mappings. Ownership
 and view lifetime remain explicit; changing a view does not transpose data.
-The checked example is [examples/layout.cpp](examples/layout.cpp). Its success
-does not validate the unimplemented backtest or establish abstraction overhead.
+The checked example is [examples/layout.cpp](examples/layout.cpp). The engine
+checks are separate; neither establishes abstraction overhead.
 
 No market dataset is needed for the initial correctness gate. Select one before
 a historical-return heatmap, and label any larger synthetic performance workload
 separately. Do not repeat a short price history and imply it is longer market data.
 
-## Measurement gate, still pending
+## Measurement gate
 
-Primary metrics: whole replay time and replay_ns/(K*(N-L)); retain individual
+Primary metrics: replay plus summary construction, and prepared_ns/(K*(N-L)); retain individual
 fresh-process observations with exact inputs, seeds, flags, revision/dirty state,
 build/source hashes and compiler diagnostics. Also measure complete preparation,
-layout materialization, state setup, replay and summary costs from the same run.
+layout materialization, state setup, replay and summary construction from the same run.
+CSV input, validation, configuration selection and CSV output are outside that
+complete computation interval; [benchmark.md](benchmark.md) defines the boundaries.
 Keep common feature count W explicit while varying configuration count K.
 Report conversion scratch and resident buffers, not only nominal matrix bytes.
 
-After all four routes pass an independent oracle, use untimed scale checks to
-propose a bounded N/K/W matrix, repetitions, input histories, balanced order,
-resource caps and stopping condition. Freeze that plan before timing. No timing
-budget or performance direction is selected by this brief.
+The independent oracle and scale gates have passed. The frozen pilot uses
+N={4096,32768}, W=48, K={64,256,1128}, seeds={11,29}, and four fresh-process
+repetitions in balanced order for every candidate: 192 observations. The maximum
+campaign duration is 15 minutes; memory, disk, entry conditions and failure
+stopping rules are in the [run guide](benchmark.md). It characterizes duration
+and variation before a main plan; no performance direction is assumed.
 
 Initial stopping point: contract documented, exact view checked, and four
 efficient variants match independent fixtures before proposing timing.
-Only the contract/view portion is complete. Provisional total effort remains
-15–22 author hours, approximately 3–8 weeks at 3–5 hours/week; revisit after the
-first correctness implementation. See [findings](findings.md) for executed work.
+The correctness, pilot and bounded main stopping points are met. The executed
+main campaign is recorded in [measurement-plan.md](measurement-plan.md).
+Historical-market selection and a main campaign are not silently inferred from
+the synthetic correctness results. Remaining author work is primarily reviewing
+the model/walkthrough, interpreting valid timings and finishing the manuscript.
+See [findings](findings.md) for executed work.

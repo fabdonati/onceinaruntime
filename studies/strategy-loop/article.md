@@ -1,114 +1,143 @@
 # One market, a thousand strategies: which way should the loop run?
 
-*A C++ backtesting experiment about loop order, memory layout, and the work hidden behind a parameter search.*
+*A C++ experiment about replaying trading rules, arranging data, and the work behind a parameter search.*
 
-> Preliminary skeleton, 15 November 2026. Opening and transitions are proposed prose. Bracketed passages are writing/evidence placeholders. No implementation or performance measurements exist for this question. Figure previews use fictional values solely to review their design.
+> Working draft, 15 November 2026. The C++23 layout example is compiled and checked; the backtest engine and performance measurements are still pending. Figure previews contain fictional values. Bracketed result and dataset passages remain open.
 
-## 1. How one trading rule becomes a thousand backtests
+## One rule, quite a few settings
 
-Suppose you have a trading rule simple enough to explain over coffee: follow the price while its recent trend looks stronger than its longer-term trend, and sit out when that changes. Before getting too attached to it, you would probably want to try a few settings. How recent is recent? How long should the longer trend be?
+Suppose you have a trading rule simple enough to explain over coffee: hold a stock while its recent trend looks stronger than its longer-term trend, and sit out when that changes. Before getting too attached to it, you would probably want to try a few settings. How recent is recent? How long should the longer trend be?
 
-Those two choices give us a grid to explore. A few dozen possibilities on each axis are enough to turn one idea into roughly a thousand versions of it, all looking at the same market history. The computer is perfectly happy to keep trying; deciding what to make of the results is our problem.
+Those two choices give us a grid to explore. With 48 possible settings for our smoothed price, there are 1,128 ways to choose a shorter and a longer one. Each pair gives us a version of the same rule, all looking at the same market history. The computer is perfectly happy to keep trying; deciding what to make of the results is our problem.
 
-That setup connects two things I want to explore here: how trading software works, and what happens when a fairly ordinary C++ design meets a larger workload. The first implementation almost writes itself. Pick a setting, replay the history, save the result, and move on to the next setting. But we could also read the first market event, update every strategy, and then move on to the next event. Each strategy still sees its own history in order. The route through the work changes.
+This is where my interest in trading meets the sort of question I can investigate in C++. The straightforward implementation is to pick a pair, replay the history, save the result, and move on to the next pair. But we could also read the first market event, update every version of the strategy, and then move to the next event. Each strategy would still see its own history in order. We would be taking a different route through the same work.
 
-**[FIGURE 1 — What are we asking the computer to do?]**
+I want to find out what that route costs once each strategy has an account to update and some results to produce. There is also a second choice underneath the loops: how the values they read are arranged in memory. C++23's `mdspan` gives us a way to make that choice explicit without changing the coordinates we use to access them.
 
-[One triangular parameter heatmap: fast moving-average span horizontally, slow span vertically, net return in the chosen historical period encoded by color. Show only valid fast < slow combinations. This establishes the workload; all implementations must reproduce the same result for each tile. Do not duplicate the heatmap for each implementation.]
+**[FIGURE 1 — A thousand versions of one rule]**
 
-*Proposed caption:* Each valid tile is one version of the same rule. The color describes its result on this particular history. The implementation comparison below must preserve every tile's trading decisions and results.
+[Place the triangular fast/slow parameter heatmap here once it is backed by checked results and an identified dataset. Each tile is one configuration's net return over the same period. The current preview is fictional and cannot fill this slot as a result.]
 
-## 2. Give the financial example just enough machinery
+## Give each strategy its own little account
 
-An exponential moving average is a way to smooth a price while giving more weight to recent observations. We will compare a faster average with a slower one: take a long position when the fast average is above the slow average, and otherwise hold cash. Here, long just means that the position benefits when the price rises.
+An exponential moving average, or EMA, smooths a price by combining the latest observation with its previous smoothed value. We will use:
 
-[Explain the recurrence with one short equation and a small price/average illustration only if needed: EMA(t) = alpha * close(t) + (1 - alpha) * EMA(t-1). Define alpha = 2 / (span + 1). Freeze initialization, warm-up and equality behavior in the experiment brief.]
+```text
+EMA[t] = alpha * close[t] + (1 - alpha) * EMA[t - 1]
+alpha  = 2 / (span + 1)
+```
 
-[Specify the accounting contract before implementation: a signal calculated from a completed bar becomes eligible at the following bar's open; identical position sizing, transaction-cost model, mark-to-market rules and final-position treatment in every route. Use a deliberately simple long/cash model. Exact accounting remains a prerequisite, not a result.]
+A shorter span gives the latest price more weight, so its average reacts more quickly. Our rule holds the asset when the fast average is above the slow one, and holds cash otherwise. A 10-bar/30-bar pair and a 12-bar/40-bar pair are two configurations. A bar is one time interval with an opening and closing price; the interval for the eventual market example is still to be selected.
 
-There is already an easy way to waste work here. Many parameter pairs reuse the same moving average, so computing it again for every pair would make the baseline unnecessarily expensive. We will calculate each distinct average once and let both replay orders use those same values. That leaves a more focused question: how should the replay visit the features and strategy states?
+Each configuration gets its own simulated account. They share the price history and indicator values, but each has its own cash, holding and record of what happened. This independence is what will let us rearrange their updates. If two strategies competed for the same cash or the same available fill, changing their order could change the answer.
 
-[Describe one liquid instrument and one frozen, documented dataset after selection. The performance question can first use deterministic synthetic input for verification. Historical data is needed before presenting the heatmap as a market example. No data source or period has been selected.]
+There is one timing detail to get right before worrying about the computer's clock. A signal calculated from Monday's closing price can affect the trade at Tuesday's open in our model. It cannot buy at Monday's open using information from later that day. So each update first carries out the previous completed bar's instruction, values the account at the current close, and prepares the next instruction.
 
-## 3. Walk down the history, or across the strategies
+For example, suppose an account has 1,000 in cash and its previous signal says to buy. At an opening price of 100, it buys 10 shares if we temporarily ignore fees. If the close is 102, the account is worth 1,020. A sell signal calculated from that close will wait until the following open. If it opens at 99, those shares sell for 990. The overnight move belongs in the result; rearranging our loops must preserve it too.
 
-Imagine a spreadsheet with market events down the rows and strategy settings across the columns. One approach finishes a column before starting the next; the other finishes a row. In both cases, each individual strategy moves from the top of its column to the bottom. We can change the visit order because these simulated strategies have independent states and do not compete for capital or fills.
+The checked engine will use a small explicit proportional fee, fractional holdings, and a final liquidation rule. The fee-free numbers above are just a hand-worked illustration. The [experiment brief](brief.md) fixes the accounting details so that all four implementations do the same job.
 
-**[FIGURE 2 — Two traversals, then two memory layouts]**
+[DATASET — Select and document one instrument, provider, period, bar interval and price convention before producing a market-return heatmap. Deterministic synthetic input comes first for correctness; it will be labelled synthetic wherever used.]
 
-[A blue path travels down one strategy column at a time. A red path travels across one event row at a time. Beneath them, show two small memory strips: a complete indicator history stored together, and all indicator values for one event stored together. These are distinct choices; crossing them gives four variants. This is a logical traversal diagram, not a timeline.]
+## Two ways to walk through the work
 
-The two loop nests would look roughly like this. Both call the same state-transition function:
+Imagine a spreadsheet with market events down the rows and strategy configurations across the columns. We can finish one column before starting the next, or finish one row before moving down. Either way, every individual strategy travels from the top of its column to the bottom.
+
+The strategy-first route keeps one account in hand while it works through the history. The event-first route keeps returning to a collection of accounts while advancing through the market events. That gives us a plausible tradeoff to examine: access to the market features on one side, and access to strategy state on the other. We have not yet measured which matters more.
+
+**[FIGURE 2 — Two routes, then two storage layouts]**
+
+[Keep the traversal schematic: blue down the strategy columns, red across the event rows. Below it, explain the separate feature table and its two storage orders. Logical traversal arrows are not elapsed-time traces.]
+
+The two loop nests look like this. `step` will contain the same accounting in both; this is still engine pseudocode:
 
 ```cpp
-// Illustrative pseudocode; step() and its accounting are not implemented.
-// features(t, window) denotes a read-only, two-dimensional view.
 for (std::size_t s = 0; s < configs.size(); ++s) {
-    auto& state = states[s];
-    const auto config = configs[s];
-    for (std::size_t t = first_bar; t < last_bar; ++t) {
-        step(state, config, bars[t], features(t, config.fast),
-             features(t, config.slow));
+    for (std::size_t t = first_bar; t < bars.size(); ++t) {
+        step(states[s], configs[s], bars[t],
+             features[t, configs[s].fast], features[t, configs[s].slow]);
     }
 }
 
-for (std::size_t t = first_bar; t < last_bar; ++t) {
-    const auto& bar = bars[t];
+for (std::size_t t = first_bar; t < bars.size(); ++t) {
     for (std::size_t s = 0; s < configs.size(); ++s) {
-        const auto config = configs[s];
-        step(states[s], config, bar, features(t, config.fast),
-             features(t, config.slow));
+        step(states[s], configs[s], bars[t],
+             features[t, configs[s].fast], features[t, configs[s].slow]);
     }
 }
 ```
 
-[Follow the price/features/state accesses for a single update. The strategy-first route repeatedly revisits history while concentrating on one strategy state. The event-first route revisits a set of states while progressing through history once in logical event order. Describe access patterns; do not equate source-level accesses with physical memory reads.]
+Before either loop starts, we will calculate each distinct EMA once. Many pairs reuse the same average, so recalculating it for every strategy would make the comparison unnecessarily expensive. Both traversal orders get the same shared feature values and produce a result for every configuration, in the same configuration order.
 
-## 4. The C++ part: make the layout an explicit choice
+## The other table, and where `mdspan` fits
 
-There is a second decision hiding under `features(t, window)`: which neighboring values are actually next to each other in memory? We can keep the logical coordinates the same while arranging the backing storage in either order. This is a useful place for C++23's `std::mdspan`, a non-owning multidimensional view with a layout policy. It lets us express the mapping separately from the owning buffer. Changing a view's policy does not transpose an existing dataset; the backing values must be arranged to match it. [C++ working draft: multidimensional views](https://eel.is/c%2B%2Bdraft/views.multidim)
+The feature table is different from the spreadsheet of strategy updates. Its rows are bars, but its columns are EMA windows. A thousand configurations can share a few dozen indicator columns.
 
-[Introduce the proposed view, after a local compile check. For logical dimensions [bar, window], layout_left gives bar stride 1; layout_right gives window stride 1. Backing buffers are separately materialized from the same canonical feature values.]
+Take three bars and just two indicator columns, A and B:
+
+```text
+             A    B
+bar 0       A0   B0
+bar 1       A1   B1
+bar 2       A2   B2
+
+History together:   A0 A1 A2 B0 B1 B2
+Snapshot together:  A0 B0 A1 B1 A2 B2
+```
+
+In the first arrangement, following one indicator through time takes us through neighboring values. In the second, neighboring values describe different indicators at the same event. Both represent the same logical table.
+
+Here is the C++ view we can use for either:
 
 ```cpp
-// Proposed C++23 type; toolchain support and generated code still need checking.
 template<class Layout>
-using EmaView = std::mdspan<const double,
-                          std::dextents<std::size_t, 2>, Layout>;
+using FeatureView = std::mdspan<const double,
+                              std::dextents<std::size_t, 2>, Layout>;
 ```
 
-[One concise 2 x 2 table: strategy-first/event-first crossed with history-contiguous/snapshot-contiguous features. Hold strategy-state representation, arithmetic, config ordering and output requirements constant. Do not also introduce AoS/SoA, explicit SIMD, multithreading or float/double into this first comparison.]
+The backing buffer owns the numbers; `mdspan` holds the information needed to find them. With logical dimensions `[bar, window]`, `layout_left` puts successive bars next to each other. `layout_right` puts successive windows next to each other. In both cases, the expression is `features[t, w]`. These mappings follow the [standard layout definitions](https://eel.is/c%2B%2Bdraft/mdspan.layout.left.overview) and [their right-layout counterpart](https://eel.is/c%2B%2Bdraft/mdspan.layout.right.overview).
 
-[Explain why independent strategy updates are a possible vectorization dimension, while a strategy's own state links one time step to the next. Inspect compiler reports and generated code before saying that a loop vectorized. GCC exposes optimization reports for this purpose. No SIMD speedup is assumed. [GCC optimization reports](https://gcc.gnu.org/onlinedocs/gcc/Developer-Options.html)]
+For N bars and W windows, the underlying offsets are `t + N * w` and `t * W + w`. The policy makes those mappings explicit. It does not turn one backing array into the other. If we change the view without arranging the data to match, we read different values. The owner must also remain alive, without an invalidating reallocation, for as long as we use its view.
 
-## 5. Which version wins, and under which workload?
+The [small runnable example](examples/layout.cpp) checks this with six invented values, both sets of strides and a deliberately mismatched view. It builds on my existing GCC 16.2 setup in C++23 mode and passes sanitizer checks. [GCC's release notes](https://gcc.gnu.org/gcc-16/changes.html) list `mdspan` support; the local check establishes that the particular form used here works. It says nothing yet about backtest speed or the cost of the abstraction.
 
-[First report independent correctness checks: decisions, positions, trade counts and numerical results. Do not proceed to performance interpretation if the four variants disagree on the required output.]
+That leaves four combinations:
 
-**[FIGURE 3 — The cost of one strategy-bar]**
+| Traversal | Feature storage |
+| --- | --- |
+| Finish one strategy's history at a time | One indicator's history together |
+| Finish one strategy's history at a time | One event's indicator snapshot together |
+| Update every strategy for one event at a time | One indicator's history together |
+| Update every strategy for one event at a time | One event's indicator snapshot together |
 
-[Two small-multiple line charts, one per feature layout. Horizontal axis: number of parameter pairs K. Vertical axis: replay nanoseconds per strategy-bar, lower is better. Blue: strategy-first. Red: event-first. Fix history length and feature set within this comparison; show matched process observations, not an unsupported confidence band. Repeat for a second history length only if it changes the engineering decision.]
+The state representation, strategy ordering and arithmetic stay fixed. This lets us ask about traversal and layout separately. `mdspan` is how we express the layout choice here; there is no raw-pointer-versus-view comparison, and no assumed SIMD benefit.
 
-*Proposed caption:* Each point summarizes repeated complete replays of the same workload. One strategy-bar means updating one strategy with one eligible bar. Layout is held fixed within each panel. [Insert exact workload, host/compiler/revision, observation structure and summary definition after measurement.]
+## What we will measure
 
-[Results paragraph: state the observed ordering, its magnitude and its conditions. If results overlap or the ordering changes, preserve that outcome. Do not prewrite a crossover or universal winner.]
+First we need to check the decisions, holdings, trade counts and numerical summaries against an independent reference. Matching the final return alone would leave too much room for two different histories to happen to end at the same number. Small fixtures will include an overnight gap, equality between indicators, no trades, and a position still open at the end.
 
-[Mechanism paragraph: connect compiler evidence, state/feature sizes and access patterns to plausible explanations. Timing alone cannot identify a cache boundary, memory bandwidth limit or vectorization cause.]
+Then we can time a complete replay and divide by the number of configurations times the number of eligible bars. That gives us nanoseconds per strategy-bar: the cost of updating one configuration for one event, averaged over the replay. It is a throughput measure derived from the full interval, not the latency of an individual market event.
+
+**[FIGURE 3 — What does one strategy-bar cost?]**
+
+[Two panels, one per physical feature layout. Configuration count K on the horizontal axis; replay nanoseconds per strategy-bar vertically. Blue strategy-first, red event-first. Hold history length N and feature population W fixed within a comparison. Retain matched process observations and define the descriptive center. No assumed crossover or smoothed confidence band.]
+
+[RESULTS — Report the observed ordering and variation, including an unresolved difference if that is what we find. Inspect the measured build's compiler diagnostics before discussing vectorization. Timings alone will not identify cache misses or bandwidth limits.]
+
+I also want the complete-run cost: preparing the features in the required storage order, setting up the accounts, replaying the history, and producing the summaries. A layout that helps the replay may take work to prepare. Whether it is useful depends partly on how often that preparation can be reused.
 
 **[OPTIONAL FIGURE 4 — What did the whole run cost?]**
 
-[Four horizontal stacked bars at one decision-relevant workload: feature preparation/materialization, state setup, replay and summary output. Each bar is one complete variant. Include this figure only if preprocessing meaningfully changes the reader's choice; otherwise give the totals in a short table. A fast kernel can be a small part of a complete run.]
+[Include the four stage breakdowns only if preparation changes the practical interpretation. Derive stages from the same complete intervals; otherwise report whole-run totals in a small table. Record memory and any conversion scratch separately.]
 
-[Give whole-run elapsed time in the text even if the optional figure is omitted. Separately record memory footprint; report the common footprint once rather than inventing a memory contest between equal-size buffers.]
+## What this could change in a research tool
 
-## 6. What this changes in a research tool
+The useful outcome would be a reason to organize an independent parameter sweep one way under a stated workload. That could help when trying settings for a signal or replaying scenarios in a research application. A shared portfolio or an execution simulator with competition for fills would need its dependencies examined before applying the same loop transformation.
 
-[Close with the supported design decision: when an independently stateful parameter sweep benefits from a particular traversal/layout combination, what preparation it requires, and when the simpler route remains adequate. Connect to signal sweeps, parameter studies and scenario replays with genuinely independent states.]
+Making these runs faster also makes it easier to try more settings until something looks convincing. Our parameter heatmap will describe one chosen history. It will not establish that its brightest tile is a good strategy for the next one. Bailey and colleagues discuss this selection problem in [*The Probability of Backtest Overfitting*, February 2015](https://www.davidhbailey.com/dhbpapers/backtest-prob.pdf).
 
-There is another consequence to keep in mind: making it easier to test more settings also makes it easier to find something that looks impressive by chance. The parameter map describes this chosen history. A useful statistical investigation would need a separate selection and validation protocol; the fastest replay does not establish that its best-looking strategy will make money. [Bailey et al., *The Probability of Backtest Overfitting*, February 2015](https://www.davidhbailey.com/dhbpapers/backtest-prob.pdf)
+[CONCLUSION — Follow the measured outcome: a workload/layout-dependent advantage, little material difference, or a replay gain absorbed by preparation. Explain the supported implementation choice and its conditions. No winner is written in advance.]
 
-[Final takeaway remains open until evidence exists. Possible outcome forms: a layout-dependent advantage; little material difference for the intended workload; a kernel benefit largely absorbed by preparation. Follow with a verified public code/reproduction link when one exists.]
+## Reproduction details to complete
 
-## Proposed technical footer
-
-[Dataset/provider/date interval/licensing; strategy and accounting definitions; C++ standard/compiler/flags; machine; N/K/W and warm-up; feature/state/output bytes; complete timing boundary; raw process observations; exact code revision and dirty state; passed correctness checks; reproduction commands. No public experiment URL exists yet.]
+[Engine/data revision; provider, period and price convention; accounting contract; host/compiler/flags; N/K/W and common warm-up; bytes and timing boundaries; independent correctness outcomes; retained individual observations; exact reproduction commands. Only the layout example has run so far.]

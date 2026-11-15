@@ -20,10 +20,13 @@ jobs:
         include:
           - os: ubuntu-latest
             preset: debug
+            strategy_example: 'OFF'
           - os: ubuntu-latest
             preset: sanitize
+            strategy_example: 'OFF'
           - os: macos-latest
             preset: debug
+            strategy_example: 'ON'
     steps:
       - uses: actions/checkout@v7
         with:
@@ -49,7 +52,7 @@ jobs:
           "$compiler_path" --version
           echo "OIR_CI_COMPILER=$compiler_path" >> "$GITHUB_ENV"
       - name: Configure
-        run: cmake --preset ${{ matrix.preset }} -DCMAKE_CXX_COMPILER="$OIR_CI_COMPILER"
+        run: cmake --preset ${{ matrix.preset }} -DCMAKE_CXX_COMPILER="$OIR_CI_COMPILER" -DOIR_STRATEGY_EXAMPLES=${{ matrix.strategy_example }}
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }} --parallel 2
       - name: Test

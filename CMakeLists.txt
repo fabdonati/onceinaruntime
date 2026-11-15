@@ -31,6 +31,11 @@ if(OIR_BARRIER_SIMD)
     add_subdirectory(studies/barrier-options)
 endif()
 
+option(OIR_STRATEGY_EXAMPLES "Build the C++23 strategy-layout walkthrough" ON)
+if(OIR_STRATEGY_EXAMPLES)
+    add_subdirectory(studies/strategy-loop)
+endif()
+
 if(BUILD_TESTING)
     add_test(NAME toolchain_check COMMAND toolchain_check)
 endif()

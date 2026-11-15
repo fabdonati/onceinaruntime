@@ -1,6 +1,6 @@
 # Article and figure plan
 
-Prepared 15 November 2026. Preliminary writing/visual proposal only. No new experiment, strategy simulation, compiler probe or benchmark was run. `previews/figures/` contains explicitly fictional layout previews. These are separate from all retained barrier results.
+Prepared 15 November 2026. Preliminary writing/visual proposal only. The standalone layout example has since passed local compiler/sanitizer checks; no strategy simulation or benchmark has run. `previews/figures/` contains explicitly fictional layout previews. These are separate from all retained barrier results.
 
 ## Editorial question
 
@@ -29,7 +29,7 @@ Aim for about 1,400–1,800 final words, depending on the findings. No introduct
 - Precompute each distinct EMA once. All variants use identical canonical feature values. No route gets a more efficient indicator algorithm or a different warm-up.
 - Logical feature dimensions: [bar, indicator window]. History-contiguous means bar stride 1 (`layout_left`); snapshot-contiguous means window stride 1 (`layout_right`). Layout changes require correct physical materialization, not reinterpretation of the same bytes.
 - Four variants: two traversal orders x two feature layouts. Within each layout compare traversal orders; within each order compare layouts. Keep the state structure and config ordering fixed.
-- C++23 is justified by mdspan for this new question. It does not alter the standard or build setup of any existing experiment. GCC 16 documentation lists mdspan support; this exact type and generated code have not been compiled locally. If the preflight fails, choose a small C++20 view implementation or revisit setup explicitly before implementation.
+- C++23 is justified by mdspan for this new question. It does not alter the standard or build setup of any existing experiment. GCC 16 documentation lists mdspan support; the exact view and its strides now pass locally in `examples/layout.cpp`. Generated code for a backtest loop remains unexamined.
 - Keep AoS/SoA, manual SIMD, threading, alternative strategies, precision comparisons and Ipopt out of the first experiment. Vectorization is an observed compiler outcome, not an assumed treatment.
 - Proposed workload variation: a small number of nested configuration counts K and two or three history lengths N. Define the feature population W and its usage explicitly; do not silently change W while attributing the result solely to K. Freeze a bounded matrix after an untimed preflight.
 - The common feature set models a reusable research input. For fresh-run totals disclose exactly which features are prepared, their materialization cost, and any reuse assumption. Do not compare one cold fresh run with another route's already-cached preprocessing.
@@ -48,7 +48,7 @@ Aim for about 1,400–1,800 final words, depending on the findings. No introduct
 | Financial outputs | Net period return, trade count, turnover and maximum drawdown under the frozen accounting contract | Output parity; only net return needs a main-text heatmap |
 | Correctness | Per-bar target/position/trade trace and per-config result checks against an independent small reference | Required outside timed paths; final P&L alone can hide divergent paths |
 
-For a future equity sequence E_t > 0: net return = E_end/E_start - 1; maximum drawdown = max_t(1 - E_t / max_{u<=t} E_u). Define turnover as sum of absolute traded notional divided by fixed initial capital, if this is the chosen account model. Trading-event counts must define entries/exits separately from round trips. Freeze positivity, financing, cost, liquidation and rounding rules before producing these metrics.
+For a future equity sequence E_t > 0: net return = E_end/E_start - 1; maximum drawdown = max_t(1 - E_t / max_{u<=t} E_u). Define turnover as sum of absolute traded notional divided by fixed initial capital, if this is the chosen account model. Trading-event counts must define entries/exits separately from round trips. The working accounting, fee, warm-up and liquidation rules are now in `brief.md`; implement and independently check them before producing metrics.
 
 No Sharpe-ratio ranking, p99 timing claim, annualized extrapolation or probabilistic uncertainty band is needed for the pilot. Cross-configuration outcomes share one market history and are not independent market samples. Timing repetitions and input histories must also be identified separately.
 
@@ -93,8 +93,8 @@ Follow the current `publication/visual-style.json`: warm paper #FCE9D7, ink #0F0
 
 ## Status and next step
 
-Status: preliminary skeleton and figure proposal prepared; no implementation, correctness run, market-data processing or timing campaign started. Existing barrier work and active-investigation records are untouched.
+Status: expanded manuscript, working accounting contract and checked layout example. No backtest correctness, market-data processing or timing campaign exists. Barrier evidence is unchanged.
 
-Next: review the article premise and figure selection. Then use a bounded investigation brief to freeze accounting/data, inspect exact mdspan support, define the four variants and confirm that both efficient implementations produce identical required outputs before measuring anything.
+Next: implement the independent accounting reference and four equal-output variants against the working brief. Freeze the data and timing matrix only after deterministic correctness checks and untimed scale checks.
 
 Estimated total author effort: provisionally 15–22 hours including setup, reference checks, implementation, one bounded campaign, interpretation and writing. That is approximately 3–8 weeks at 3–5 hours/week. Reassess after the first small correctness/preflight milestone; this is not a publication-date commitment.

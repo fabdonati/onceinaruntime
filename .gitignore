@@ -3,3 +3,8 @@
 __pycache__/
 *.pyc
 .DS_Store
+/local/
+/AGENTS.md
+/handoff.md
+.cache/
+.mpl-cache/

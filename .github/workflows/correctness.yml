@@ -28,8 +28,28 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+      - name: Python analysis dependencies
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install -r requirements-analysis.txt
+      - name: GCC toolchain
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            brew list gcc >/dev/null 2>&1 || brew install gcc
+            compiler_candidates=("$(brew --prefix gcc)"/bin/g++-[0-9]*)
+            compiler_path="${compiler_candidates[0]}"
+          else
+            compiler_path=$(command -v g++)
+          fi
+          test -n "$compiler_path"
+          "$compiler_path" --version
+          echo "OIR_CI_COMPILER=$compiler_path" >> "$GITHUB_ENV"
       - name: Configure
-        run: cmake --preset ${{ matrix.preset }}
+        run: cmake --preset ${{ matrix.preset }} -DCMAKE_CXX_COMPILER="$OIR_CI_COMPILER"
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }} --parallel 2
       - name: Test

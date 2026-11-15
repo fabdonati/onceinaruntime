@@ -1,0 +1,18 @@
+{
+  "kind": "bounded main campaign",
+  "paths": 100000,
+  "steps": 252,
+  "seeds": [11, 29, 47],
+  "barriers": [105, 120, 150],
+  "layouts": ["path", "step"],
+  "methods": ["scalar", "fixed", "refill"],
+  "process_repeats_per_seed_case": 6,
+  "prepared_warmups": 1,
+  "complete_valuation_warmups": 1,
+  "maximum_seconds": 1800,
+  "maximum_evidence_bytes": 1073741824,
+  "maximum_combined_peak_rss_bytes": 1073741824,
+  "maximum_start_load_per_cpu": 0.5,
+  "order": "All six method permutations once per seed/barrier/layout, rotated by seed index plus case index.",
+  "stop_rule": "One matrix, no replacements. Stop on mismatch, command failure, nonfinite duration, time/resource cap or power leaving stable AC. Refuse to start observations above the declared load gate; retain later load changes."
+}

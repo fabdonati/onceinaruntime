@@ -2,56 +2,71 @@
 
 New ideas and performance claims, put to the test.
 
-Start with a claim: an algorithm is faster, an abstraction makes a design simpler, or a new technique changes how we solve a problem. What happens when we try it, and which assumptions change the answer?
+Small investigations into performance, low latency and modern C++, with examples
+from numerical software, quant finance and trading systems. Each study keeps its
+question, implementation, checks, findings, figures and manuscript together.
 
-Once in a Runtime explores programming ideas through small experiments and explanations. Performance is a recurring question; the subjects can also range across software, numerical methods, systems and language design. The question determines the tools, whether that means C++, Rust, OCaml, Python or something else. Each investigation separates its motivating source, hypotheses, evidence and limitations.
+Articles and subscriptions: [Once in a Runtime](https://onceinaruntime.substack.com).
 
-Articles and subscriptions: [Once in a Runtime on Substack](https://onceinaruntime.substack.com).
+## Studies
 
-This repository holds the code and reproduction instructions. The first experiment uses C++20 and has a working correctness and smoke pipeline. There are no published performance findings yet.
+| Study | Working material |
+| --- | --- |
+| [Barrier options and SIMD](studies/barrier-options/README.md) | Checked C++ implementation, measured main study, article draft and prepared float/double extension. |
+| [One market, a thousand strategies](studies/strategy-loop/README.md) | Preliminary article and proposed loop-order/layout experiment. Preview values are fictional; no implementation or timing evidence exists yet. |
 
-## Local setup
+Each study's README records its status and next step. Manuscripts on `main` are
+work in progress; their presence does not mean an article has been published.
+Stable folder names are independent of publication order.
 
-Requirements: a C++20 compiler, CMake 3.21 or newer, Make, and Python 3.10 or newer. C++ and the runner need no third-party libraries; chart generation uses Matplotlib in a local virtual environment. The checked presets use Unix Makefiles; other generators can be configured manually in a separate build directory.
+## Build and check
 
-```sh
-cmake --preset debug
-cmake --build --preset debug
-./build/debug/toolchain_check
-ctest --preset debug
-
-cmake --preset sanitize
-cmake --build --preset sanitize
-ctest --preset sanitize
-
-cmake --preset release
-cmake --build --preset release
-```
-
-Sanitizer and debug builds are for correctness. Only optimized builds are suitable for timing. Do not build or run other heavy work during measurement.
-
-## Investigations
-
-1. [Message replay: scanning versus indexing](experiments/001-message-replay/brief.md). Bounded implementation and correctness checks available. [Findings and next step](experiments/001-message-replay/findings.md) record validation status. No published performance conclusions.
-
-## Reproduce the smoke pipeline
-
-After building and testing release, from the repository root:
+The implemented study uses C++20, CMake 3.21+, Make, Python 3.10+, NumPy and
+Matplotlib. Its `<experimental/simd>` interface requires a supporting compiler
+and standard library. The checked local route is GCC 16.2/libstdc++.
+The proposed strategy study targets C++23 `mdspan`; its exact setup is unverified.
 
 ```sh
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements-analysis.txt
-python3 tools/capture_environment.py --output build/environment.json
-python3 tools/run_replay.py --config experiments/001-message-replay/configs/smoke.json --runs 3 --environment build/environment.json --output build/replay-smoke
-.venv/bin/python experiments/001-message-replay/analysis/analyze.py build/replay-smoke --output build/replay-smoke/analysis
+cmake --preset debug
+cmake --build --preset debug
+ctest --preset debug
+cmake --preset sanitize
+cmake --build --preset sanitize
+ctest --preset sanitize
 ```
 
-Use a new output directory for each invocation: the runner refuses to overwrite data. Capturing hardware details may require running outside a restricted shell; failed or empty queries remain recorded. The smoke configuration uses a 6.4 MB input batch, 64 topics and one selected topic, with 48-byte payloads. It checks the pipeline and supports no broad performance conclusion.
+Presets select `g++-16` and include both barrier precisions. To use another
+supporting compiler in a fresh build directory, override it, for example
+`cmake --preset debug -DCMAKE_CXX_COMPILER=g++`. The local Python environment is
+used automatically when present; otherwise set `Python3_EXECUTABLE` explicitly.
 
-The initial local smoke dataset is not included in this repository. Generate your own smoke output with the commands above; inspect the [result format and interpretation limits](experiments/001-message-replay/results/README.md) before reading the chart as evidence. The pinned chart dependencies are in [requirements-analysis-lock.txt](requirements-analysis-lock.txt), recorded with Python 3.14. Use that file in place of requirements-analysis.txt when recreating that analysis environment.
+Only release builds are used for timing. See the
+[barrier reproduction guide](studies/barrier-options/environment.md) and
+[precision run guide](studies/barrier-options/precision/README.md).
+CI checks correctness and analysis, without timing campaigns.
 
-Environment details and exact reproduction commands accompany each experiment. Raw smoke observations must be labelled preliminary. Large future datasets should be retained outside Git with a manifest and content hashes if they outgrow this repository; no external storage is needed yet.
+## Publication
 
-## License
+- [About](publication/about.md)
+- [Publication introduction draft](publication/introduction.md)
+- [Subscriber welcome and name story](publication/welcome-email.md)
+- [Figure colors and typography](publication/visual-style.json)
 
-The code is available under the [MIT license](LICENSE).
+The approved About and welcome wording is retained. Updating these files does
+not update Substack automatically. Manuscripts contain explicit unresolved
+passages where evidence or author review is still needed.
+
+## Evidence and maintenance
+
+Track current source, manuscripts, selected figures and compact numeric tables.
+Large raw runs, historical source snapshots, reviews and private research stay
+in ignored local storage. [Barrier result documentation](studies/barrier-options/results/README.md)
+explains the evidence relationship and reproduction limits.
+
+Retired message-replay and batch-lifecycle studies are outside the active build.
+Their source and superseded planning were preserved in one verified local archive
+before removal. Historical measurement manifests were not rewritten.
+
+Code is available under the [MIT license](LICENSE).

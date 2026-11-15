@@ -1,0 +1,139 @@
+{
+  "status": "Illustrative mechanism only; invented teaching workload",
+  "paths": {
+    "A": 2,
+    "B": 6,
+    "C": 4,
+    "D": 2,
+    "E": 4,
+    "F": 2
+  },
+  "scalar": [
+    [
+      0,
+      0,
+      0,
+      2
+    ],
+    [
+      1,
+      0,
+      2,
+      8
+    ],
+    [
+      2,
+      0,
+      8,
+      12
+    ],
+    [
+      3,
+      0,
+      12,
+      14
+    ],
+    [
+      4,
+      0,
+      14,
+      18
+    ],
+    [
+      5,
+      0,
+      18,
+      20
+    ]
+  ],
+  "fixed": [
+    [
+      0,
+      0,
+      0,
+      2
+    ],
+    [
+      1,
+      1,
+      0,
+      6
+    ],
+    [
+      2,
+      0,
+      6,
+      10
+    ],
+    [
+      3,
+      1,
+      6,
+      8
+    ],
+    [
+      4,
+      0,
+      10,
+      14
+    ],
+    [
+      5,
+      1,
+      10,
+      12
+    ]
+  ],
+  "refill": [
+    [
+      0,
+      0,
+      0,
+      2
+    ],
+    [
+      1,
+      1,
+      0,
+      6
+    ],
+    [
+      2,
+      0,
+      2,
+      6
+    ],
+    [
+      3,
+      0,
+      6,
+      8
+    ],
+    [
+      4,
+      1,
+      6,
+      10
+    ],
+    [
+      5,
+      0,
+      8,
+      10
+    ]
+  ],
+  "round_counts": {
+    "scalar": 20,
+    "fixed": 14,
+    "refill": 10
+  },
+  "useful_updates": 20,
+  "new_measurements": false,
+  "checks": [
+    "Every method processes each path exactly once",
+    "Every method performs exactly 20 useful updates",
+    "Within-lane work never overlaps",
+    "Refill round 3 contains C1 and B3"
+  ],
+  "project_source_unchanged": true
+}

@@ -1,0 +1,15 @@
+{
+  "kind": "timing-scale pilot, not main campaign",
+  "paths": 8192,
+  "steps": 252,
+  "seeds": [11, 29, 47],
+  "barriers": [105, 120, 150],
+  "layouts": ["path", "step"],
+  "methods": ["scalar", "fixed", "refill"],
+  "process_repeats_per_seed_case": 3,
+  "prepared_warmups": 1,
+  "complete_valuation_warmups": 1,
+  "observation_per_process_per_scope": 1,
+  "order": "cyclic rotation by seed index + case index + repeat; three repeats put each policy in each order position",
+  "stop_rule": "Run matrix once; stop on failure or power leaving AC. Retain all attempts; no replacements of slow observations."
+}

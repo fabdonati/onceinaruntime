@@ -1,0 +1,104 @@
+{
+  "status": "FICTIONAL VALUES / NOT BENCHMARK RESULTS",
+  "purpose": "Chart layout review only; shapes are not predictions.",
+  "measured_observations": 0,
+  "config_counts": [
+    8,
+    16,
+    32,
+    64,
+    128,
+    256,
+    512,
+    1024
+  ],
+  "fictional_replay_ns_per_strategy_bar": {
+    "history_contiguous": {
+      "strategy_first": [
+        3.5,
+        3.4,
+        3.5,
+        3.6,
+        3.8,
+        4.3,
+        5.1,
+        6.3
+      ],
+      "event_first": [
+        5.2,
+        4.9,
+        4.6,
+        4.4,
+        4.2,
+        4.0,
+        4.1,
+        4.4
+      ]
+    },
+    "snapshot_contiguous": {
+      "strategy_first": [
+        4.2,
+        4.5,
+        4.9,
+        5.3,
+        5.9,
+        6.5,
+        7.0,
+        7.4
+      ],
+      "event_first": [
+        3.9,
+        3.8,
+        3.8,
+        3.9,
+        4.1,
+        4.8,
+        5.9,
+        7.1
+      ]
+    }
+  },
+  "fictional_whole_run_ms": [
+    {
+      "label": "History / strategy-first",
+      "order": "strategy",
+      "prepare": 110,
+      "setup": 9,
+      "replay": 130,
+      "summary": 7
+    },
+    {
+      "label": "History / event-first",
+      "order": "event",
+      "prepare": 110,
+      "setup": 9,
+      "replay": 94,
+      "summary": 7
+    },
+    {
+      "label": "Snapshot / strategy-first",
+      "order": "strategy",
+      "prepare": 134,
+      "setup": 9,
+      "replay": 148,
+      "summary": 7
+    },
+    {
+      "label": "Snapshot / event-first",
+      "order": "event",
+      "prepare": 134,
+      "setup": 9,
+      "replay": 112,
+      "summary": 7
+    }
+  ],
+  "heatmap": {
+    "status": "FICTIONAL RETURN SURFACE / NOT A BACKTEST",
+    "formula": "0.12*sin(fast_index*0.65)+0.10*cos(slow_index*0.58)-0.075; mask fast>=slow",
+    "scale_labels": [
+      "loss",
+      "flat",
+      "gain"
+    ]
+  }
+}

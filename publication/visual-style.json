@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "id": "sole-inspired-paper",
+  "updated_on": "2026-11-14",
+  "palette": {
+    "paper": "#FCE9D7",
+    "panel": "#F0DECD",
+    "ink": "#0F0F0F",
+    "blue": "#003C7F",
+    "red": "#BF0000",
+    "baseline": "#3F3F3F",
+    "muted": "#6F6F6F",
+    "rule": "#C1B3A5"
+  },
+  "typography": {
+    "headline": "Georgia Regular",
+    "subhead": "Georgia Regular",
+    "body": "Arial",
+    "fallback_serif": [
+      "Liberation Serif",
+      "DejaVu Serif"
+    ],
+    "fallback_sans": [
+      "Liberation Sans",
+      "DejaVu Sans"
+    ],
+    "headline_style": "normal",
+    "headline_weight": "normal",
+    "sizes_chart_pt": {
+      "headline": 28,
+      "section": 18,
+      "body": 12,
+      "data_label": [
+        11,
+        13
+      ],
+      "caption": [
+        9,
+        10
+      ],
+      "mechanism_headline": 30,
+      "mechanism_section": 20
+    },
+    "sizes_web_css_px": {
+      "headline": 42,
+      "section": 28,
+      "body": 16,
+      "intro": 18,
+      "caption": 14,
+      "mobile_headline": 33,
+      "mobile_section": 25
+    }
+  },
+  "reference": "https://www.ilsole24ore.com/"
+}

@@ -1,0 +1,17 @@
+{
+  "kind": "float-double prepared-input timing pilot",
+  "paths": 8192,
+  "steps": 252,
+  "seeds": [11, 29, 47],
+  "barriers": [105, 120, 150],
+  "layouts": ["path", "step"],
+  "precisions": ["f64", "f32"],
+  "methods": ["scalar", "fixed", "refill"],
+  "repeats": 6,
+  "maximum_seconds": 1800,
+  "maximum_evidence_bytes": 1073741824,
+  "maximum_combined_peak_rss_bytes": 1073741824,
+  "maximum_start_load_per_cpu": 0.5,
+  "order": "Six cyclic rotations of alternating precision/method candidates, rotated by seed/case index. Each candidate occupies each position once.",
+  "scope": "Prepared inputs: path/payoff calculation, output writes and ordered FP64 aggregation. Generation, casts, layout, validation, diagnostics and serialization excluded."
+}

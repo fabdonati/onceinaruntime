@@ -1,0 +1,2 @@
+# Preserve the retained CSV bytes, including their standard CRLF record endings.
+studies/barrier-options/results/*.csv -text whitespace=cr-at-eol

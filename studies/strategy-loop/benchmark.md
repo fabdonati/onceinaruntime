@@ -1,5 +1,12 @@
 # Reproducing the strategy study
 
+Power policy: stable AC is required by default. For an explicitly chosen battery
+experiment, add `--allow-battery` to the timing command. The manifest records
+the policy and actual power reports; failed or unknown reports remain errors.
+Keep battery and AC timing distributions separately labelled. The 17 November
+battery reproduction used the same main matrix with temporary local evidence
+output, archived after measurement; see `findings.md` for results and limits.
+
 The implementation has two loop orders and two materialized feature layouts.
 It uses C++23 `mdspan`, CMake and a standard-library-only Python accounting
 reference. NumPy and Matplotlib are needed only for figures. The barrier study
@@ -180,3 +187,82 @@ MPLCONFIGDIR=build/matplotlib XDG_CACHE_HOME=build/cache .venv/bin/python \
   studies/strategy-loop/analysis/plot.py --example --input build/strategy-verify \
   --output build/strategy-account-figure
 ```
+
+## Historical QQQ reproduction
+
+The completed 17 November extension uses the author's Alpaca SIP/split export,
+not a live API inside timed code. The [historical protocol](historical-plan.md)
+fixes selection and matrix; the [download guide](tools/alpaca/README.md) documents
+acquisition separately. Raw inputs and full evidence remain ignored.
+
+The exact normalization and activity commands used were:
+
+```sh
+.venv/bin/python studies/strategy-loop/analysis/historical.py \
+  --source local/data/alpaca/QQQ_1Min_2023-01-01_2026-01-01_sip_split \
+  --output local/data/strategy-loop/qqq-rth-20261117
+
+.venv/bin/python studies/strategy-loop/analysis/profiles.py \
+  --datasets local/data/strategy-loop/qqq-rth-20261117/manifest.json \
+  --output local/evidence/strategy-loop/historical-20261117/profiles
+```
+
+These commands refuse to overwrite existing output directories. Both historical
+configs record the resulting input-manifest hash. A newly acquired export may
+have a different retrieval manifest even when bars agree: review provenance,
+freeze new config copies with the new hash before timing, and retain the original
+configs/results. Do not bypass the hash gate or relabel earlier observations.
+
+Correctness commands, with the optional real-data excerpts enabled:
+
+```sh
+cmake --preset debug
+cmake --build --preset debug
+STRATEGY_HISTORICAL_CSV="$PWD/local/data/strategy-loop/qqq-rth-20261117/qqq-jump-n4096.csv" \
+  ctest --preset debug
+
+.venv/bin/python studies/strategy-loop/analysis/run.py --verify \
+  --config studies/strategy-loop/configs/historical-main.json \
+  --datasets local/data/strategy-loop/qqq-rth-20261117/manifest.json \
+  --output local/evidence/strategy-loop/historical-20261117/verification
+```
+
+The complete 48-worker historical main gate also covers the pilot's strict
+subset. The runner requires matching input manifest, source/build hashes,
+accounting and feature definitions. The synthetic verifier keeps its original
+exact-config requirement. If analysis/tests/configs change, rerun verification
+before new timing; source snapshots preserve the files actually executed.
+
+Timing was performed sequentially using the retained
+`local/evidence/strategy-loop/historical-20261117/run_monitored.py` controller:
+
+```sh
+.venv/bin/python local/evidence/strategy-loop/historical-20261117/run_monitored.py pilot
+.venv/bin/python local/evidence/strategy-loop/historical-20261117/run_monitored.py main
+```
+
+The controller invokes `analysis/run.py --pilot` or `--main`, respectively,
+with `--config configs/historical-pilot.json` or `historical-main.json`, the
+complete verification directory, `--allow-battery` and a fresh temporary output
+folder. Its exact argv/cwd, five-second read-only process samples, stdout/stderr
+and completion records are retained. Actual power was AC throughout both runs;
+the historical runner rejects a mode change even with battery permission.
+Both modes require the same quiet interval and resource caps. Start no concurrent
+benchmark. Archive temporary evidence only after measurement and verify every
+copied hash; original manifests retain their original temporary paths.
+
+To regenerate the checked historical figures from the retained archive:
+
+```sh
+MPLCONFIGDIR=build/matplotlib XDG_CACHE_HOME=build/cache .venv/bin/python \
+  studies/strategy-loop/analysis/plot_historical.py \
+  --run local/evidence/strategy-loop/historical-20261117/main/campaign \
+  --profiles local/evidence/strategy-loop/historical-20261117/profiles \
+  --output build/historical-figures
+```
+
+The plotter verifies raw worker identities/order, stdout and summary hashes,
+independent references, input/source/build snapshots, interval arithmetic and
+power consistency. It exports all observations, group summaries, paired ratios
+and activity descriptors. The current curated copies are in `results/` and
+`figures/`. No measurement is required merely to regenerate these plots.

@@ -1,0 +1,16 @@
+{
+  "kind": "approved editorial figures using existing evidence",
+  "source_sha256": {
+    "historical-summary.json": "d4a2ee7c2c4491067b8a768cd4008dc957493c9e4674007c7e753fb67a159166",
+    "historical-observations.csv": "c5b82e43728310cb9757b18cc6089ae0a2f171bd5d4eba1089488135d9d3f987",
+    "qqq-jump-n32768.csv": "2f51417d526446f682e7d322ee6d9f261e43efb03da6b157ba19493180feb333",
+    "profiles/qqq-jump-n32768.json": "7feeb03c08925d8cf7051a7d1d8a28c238c55162d3fd7ca4e87445a0cc97c5ab",
+    "qqq-directional-n32768.csv": "a6a67f5590aad05b926864ccf116e477c53cc26c080ee17b80ebfe110ad5b7c4",
+    "profiles/qqq-directional-n32768.json": "eff00daef3ae254ab5a923458b7c13004ad60a256ffaf222f1b2e0df6ac108de",
+    "qqq-low-directionality-n32768.csv": "401e2e21df3e3ef5fef38054f4a7d0ec6f5389db97b12e0d81b7f4e1b8616f6d",
+    "profiles/qqq-low-directionality-n32768.json": "b3637f2bb672dfab1e18755085cee86116879171c5fde6366e1516471e705063"
+  },
+  "generator_sha256": "b01ec29c633cf72f9e27fd691529428a5bf3de12d1b6594c615f0f2036c2bb8a",
+  "style": "sole-inspired-paper",
+  "timing_observations": 384
+}

@@ -4,6 +4,7 @@
 #include <cmath>
 #include <limits>
 #include <stdexcept>
+#include <type_traits>
 #include <utility>
 
 namespace strategy {
@@ -70,8 +71,23 @@ template<class Mapping, bool Diagnose>
 void run(std::span<const Bar> bars, std::span<const Config> configs,
          std::span<const double> buffer, std::size_t windows, std::size_t first,
          Order order, const Rules& rules, std::span<State> states, Trace* traces) {
+#ifdef OIR_STRATEGY_MANUAL_INDEX
+    // Comparison build: the same dynamic extents and layout, written by hand.
+    // No restrict, static dimensions, cached offsets or altered account lifetime.
+    const auto feature = [data = buffer.data(), rows = bars.size(), windows]
+                         (std::size_t t, std::size_t w) -> const double& {
+        if constexpr (std::is_same_v<Mapping, std::layout_left>)
+            return data[t + rows * w];
+        else
+            return data[t * windows + w];
+    };
+#else
     const std::mdspan<const double, std::dextents<std::size_t, 2>, Mapping>
         features(buffer.data(), bars.size(), windows);
+    const auto feature = [&features](std::size_t t, std::size_t w) -> const double& {
+        return features[t, w];
+    };
+#endif
     const auto eligible = bars.size() > first ? bars.size() - first : 0;
     if (order == Order::strategy) {
         for (std::size_t s = 0; s < configs.size(); ++s) {
@@ -80,7 +96,7 @@ void run(std::span<const Bar> bars, std::span<const Config> configs,
             for (std::size_t t = first; t < bars.size(); ++t) {
                 Trace* trace = nullptr;
                 if constexpr (Diagnose) trace = &traces[s * eligible + t - first];
-                const bool target = features[t - 1, config.fast] > features[t - 1, config.slow];
+                const bool target = feature(t - 1, config.fast) > feature(t - 1, config.slow);
                 step<Diagnose>(state, target, bars[t], t + 1 == bars.size(), rules, trace);
             }
             states[s] = state;
@@ -91,7 +107,7 @@ void run(std::span<const Bar> bars, std::span<const Config> configs,
                 Trace* trace = nullptr;
                 if constexpr (Diagnose) trace = &traces[s * eligible + t - first];
                 const auto config = configs[s];
-                const bool target = features[t - 1, config.fast] > features[t - 1, config.slow];
+                const bool target = feature(t - 1, config.fast) > feature(t - 1, config.slow);
                 step<Diagnose>(states[s], target, bars[t], t + 1 == bars.size(), rules, trace);
             }
         }

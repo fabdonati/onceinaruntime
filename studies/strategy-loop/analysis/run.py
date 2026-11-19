@@ -94,12 +94,35 @@ def validate_config(cfg):
     if cfg.get('kind') == 'synthetic strategy traversal main campaign':
         expected.update(kind='synthetic strategy traversal main campaign',seeds=[11,29,47],repeats=8,
                         maximum_quiet_wait_seconds=600,quiet_seconds=60,quiet_sample_seconds=15)
+    if cfg.get('input_kind') == 'historical':
+        expected.pop('seeds')
+        expected.update(kind='historical strategy traversal main campaign', input_kind='historical',
+                        schema_version=1, counts=[64,1128], repeats=8,
+                        profiles=['jump','directional','low-directionality'],
+                        maximum_quiet_wait_seconds=600,quiet_seconds=60,quiet_sample_seconds=15)
+        if cfg.get('kind') == 'historical strategy traversal timing pilot':
+            expected.update(kind=cfg['kind'], bars=[32768], counts=[1128], repeats=4)
+        if len(cfg.get('input_manifest_sha256','')) != 64:
+            raise ValueError('historical input manifest hash is required')
     if any(cfg.get(key) != value for key, value in expected.items()):
         raise ValueError('matrix/budget differs from its frozen configuration')
 
 
 def plan(cfg, timed):
     rows = []
+    if cfg.get('input_kind') == 'historical':
+        blocks = [(p,n,k) for p in cfg['profiles'] for n in cfg['bars'] for k in cfg['counts']]
+        for repeat in range(cfg['repeats'] if timed else 1):
+            rotation = repeat % len(blocks)
+            for profile,n,k in blocks[rotation:]+blocks[:rotation]:
+                dataset_id = f'qqq-{profile}-n{n}'
+                for position,candidate in enumerate(ORDERS[repeat % len(ORDERS)]):
+                    order,layout = CANDIDATES[candidate]
+                    rows.append(dict(id=f'{dataset_id}-k{k}-r{repeat}-{order}-{layout}',
+                        input_kind='historical', schema_version=1, dataset_id=dataset_id,
+                        input_manifest_sha256=cfg['input_manifest_sha256'], profile=profile,
+                        bars=n,configs=k,repeat=repeat,order_position=position,order=order,layout=layout))
+        return rows
     for n in cfg['bars']:
         for seed in cfg['seeds']:
             for k in cfg['counts']:
@@ -129,10 +152,45 @@ def build_issues(build, timed):
     return problems
 
 
-def power_ok(sample):
+def power_ok(sample, allow_battery=False):
     power = sample['power']
     text = power.get('stdout', '')
-    return power.get('returncode') == 0 and 'AC Power' in text and ('charged' in text or 'charging' in text)
+    if power.get('returncode') != 0:
+        return False
+    ac = 'AC Power' in text and any(state in text for state in ('charged', 'charging', 'finishing charge'))
+    battery = 'Battery Power' in text and 'discharging' in text
+    return ac or (allow_battery and battery)
+
+
+def power_mode(sample):
+    return 'battery' if 'Battery Power' in sample['power'].get('stdout','') else 'AC'
+
+
+def dataset_id(item):
+    return item.get('dataset_id') or f'n{item["bars"]}-s{item["seed"]}'
+
+
+def verification_matches(verified, cfg, sources, binary_hash, config_hash):
+    if (verified.get('status') != 'complete' or verified.get('final_integrity') != 'passed' or
+        verified.get('timed') or verified['source_sha256'] != sources or
+        verified['binary_sha256'] != binary_hash):
+        return False
+    if cfg.get('input_kind') != 'historical':
+        return verified['config_sha256'] == config_hash
+    # One complete main-scale gate also covers the explicitly smaller pilot.
+    prior = verified['config']
+    try:
+        validate_config(prior)
+    except ValueError:
+        return False
+    if (prior.get('kind') != 'historical strategy traversal main campaign' or
+        prior.get('input_manifest_sha256') != cfg['input_manifest_sha256'] or
+        verified['observations'] != len(plan(prior,False))):
+        return False
+    for field in ('spans','capital','fee','profiles'):
+        if prior[field] != cfg[field]:
+            return False
+    return set(cfg['bars']) <= set(prior['bars']) and set(cfg['counts']) <= set(prior['counts'])
 
 
 def main():
@@ -145,14 +203,19 @@ def main():
     parser.add_argument('--build', type=Path, default=ROOT/'build/release')
     parser.add_argument('--config', type=Path)
     parser.add_argument('--verified', type=Path)
+    parser.add_argument('--datasets', type=Path, help='frozen historical manifest.json for the untimed gate')
     parser.add_argument('--output', type=Path)
+    parser.add_argument('--allow-battery', action='store_true',
+                        help='explicitly permit recorded battery operation; distinguish results from AC campaigns')
     args = parser.parse_args()
     if args.config is None:
         args.config = STUDY/'configs'/('main.json' if args.main else 'pilot.json')
     cfg = json.loads(args.config.read_text())
     validate_config(cfg)
     timed = args.pilot or args.main
-    if (args.main and cfg['kind'] != 'synthetic strategy traversal main campaign') or (args.pilot and cfg['kind'] != 'synthetic strategy traversal timing pilot'):
+    historical = cfg.get('input_kind') == 'historical'
+    prefix = 'historical' if historical else 'synthetic'
+    if (args.main and cfg['kind'] != prefix+' strategy traversal main campaign') or (args.pilot and cfg['kind'] != prefix+' strategy traversal timing pilot'):
         parser.error('execution mode and configuration kind differ')
     build = args.build.resolve()
     binary = build/'bin/strategy_replay'
@@ -160,9 +223,10 @@ def main():
     issues = build_issues(build, timed or args.check)
     load_limit = (entry['cpu_count'] or 1) * cfg['maximum_start_load_per_cpu']
     if timed or args.check:
-        if not power_ok(entry):
-            issues.append('stable AC power is not established')
-        if entry['load_average'][0] > load_limit and not args.main:
+        if not power_ok(entry, args.allow_battery):
+            issues.append('accepted power state is not established' if args.allow_battery
+                          else 'stable AC power is not established')
+        if entry['load_average'][0] > load_limit and not (args.main or historical):
             issues.append(f'entry load exceeds {load_limit:g}')
     if args.check:
         print(json.dumps(dict(ready=not issues, issues=issues, environment=entry,
@@ -182,12 +246,20 @@ def main():
                     source_sha256=sources, binary_sha256=binary_hash, timed=timed,
                     compiler=command(['g++-16','--version']), python=sys.version,
                     environment=[entry], preflight_issues=issues, datasets=[], executions=[],
+                    power_policy=('AC or battery explicitly permitted' if args.allow_battery else 'stable AC required'),
+                    allow_battery=args.allow_battery,
                     observations=0, expected_observations=len(plan(cfg,timed)),
                     limitations=['Synthetic bars; no financial-performance inference.',
                                  'CPU affinity, frequency and other processes uncontrolled.',
                                  'No automatic retries or sample deletion.',
                                  'Full trace oracle uses small fixtures; scale gate checks every ordered summary.',
                                  'Source/binary snapshots retained because the working tree may be dirty.'])
+    if args.allow_battery:
+        manifest['limitations'].append('Battery operation explicitly permitted; do not pool with AC timings as identical conditions.')
+    if historical:
+        manifest.update(input_kind='historical',schema_version=1,
+                        input_manifest_sha256=cfg['input_manifest_sha256'],power_condition=power_mode(entry))
+        manifest['limitations'][0] = 'Selected QQQ minute bars; simplified price-only accounts, not executable trading performance.'
     started = time.monotonic()
     locks, observations = [], []
 
@@ -252,12 +324,14 @@ def main():
             shutil.copyfile(build/name, output/name)
         if timed:
             verified = json.loads((args.verified/'manifest.json').read_text())
-            if (verified['status'] != 'complete' or verified['timed'] or
-                verified['source_sha256'] != sources or verified['binary_sha256'] != binary_hash or
-                verified['config_sha256'] != digest(args.config)):
+            if not verification_matches(verified,cfg,sources,binary_hash,digest(args.config)):
                 raise RuntimeError('verification does not match this complete source/build/plan')
             manifest['verification'] = dict(path=str(args.verified.resolve()),
                                             manifest_sha256=digest(args.verified/'manifest.json'))
+            if historical:
+                if digest(args.verified/'input-manifest.json') != cfg['input_manifest_sha256']:
+                    raise RuntimeError('historical input manifest changed')
+                shutil.copyfile(args.verified/'input-manifest.json',output/'input-manifest.json')
             for dataset in verified['datasets']:
                 for key in ('file','reference'):
                     source = args.verified/dataset[key]
@@ -272,21 +346,44 @@ def main():
             manifest['thermal_before'] = command(['pmset','-g','therm'])
             manifest['background_before'] = command(['ps','-Ao','pcpu,comm'])
         else:
-            for n in cfg['bars']:
-                for seed in cfg['seeds']:
-                    bars = synthetic(n, seed)
-                    file = output/f'n{n}-s{seed}.csv'
+            if historical:
+                if args.datasets is None or digest(args.datasets) != cfg['input_manifest_sha256']:
+                    raise RuntimeError('historical manifest missing or hash differs')
+                inputs = json.loads(args.datasets.read_text())
+                if inputs['status'] != 'complete' or inputs['input_kind'] != 'historical':
+                    raise RuntimeError('historical dataset is incomplete')
+                items = inputs['datasets']
+                wanted = {f'qqq-{p}-n{n}' for p in cfg['profiles'] for n in cfg['bars']}
+                if len(items) != len(wanted) or {dataset_id(d) for d in items} != wanted:
+                    raise RuntimeError('historical datasets differ from frozen matrix')
+                shutil.copyfile(args.datasets,output/'input-manifest.json')
+            else:
+                items = [dict(bars=n,seed=seed) for n in cfg['bars'] for seed in cfg['seeds']]
+            for item in items:
+                    n = item['bars']
+                    if historical:
+                        source = args.datasets.parent/item['file']
+                        if digest(source) != item['file_sha256']:
+                            raise RuntimeError('historical CSV hash differs')
+                        bars = [(int(r['timestamp']),float(r['open']),float(r['close'])) for r in read_rows(source)]
+                        if len(bars) != n:
+                            raise RuntimeError('historical row count differs')
+                    else:
+                        bars = synthetic(n, item['seed'])
+                    file = output/(dataset_id(item)+'.csv')
                     write_bars(file,bars)
-                    print(f'Independent ledger: N={n}, seed={seed}, K={max(cfg["counts"])}',flush=True)
+                    if historical and digest(file) != item['file_sha256']:
+                        raise RuntimeError('canonical historical bytes differ')
+                    print(f'Independent ledger: {dataset_id(item)}, K={max(cfg["counts"])}',flush=True)
                     _, summaries, _ = replay(bars,cfg['spans'],max(cfg['counts']),cfg['capital'],cfg['fee'],diagnose=False)
-                    reference = output/f'n{n}-s{seed}.reference.csv'
+                    reference = output/(dataset_id(item)+'.reference.csv')
                     with reference.open('w',newline='') as stream:
                         writer=csv.DictWriter(stream,fieldnames=list(summaries[0]),lineterminator='\n')
                         writer.writeheader(); writer.writerows(summaries)
-                    manifest['datasets'].append(dict(bars=n,seed=seed,file=file.name,file_sha256=digest(file),
+                    manifest['datasets'].append(dict(item, file=file.name,file_sha256=digest(file),
                                                      reference=reference.name,reference_sha256=digest(reference)))
                     resources(); save()
-        if args.main:
+        if args.main or (historical and timed):
             manifest['status'] = 'waiting_for_quiet'
             quiet_start = None
             waiting_start = time.monotonic()
@@ -294,8 +391,10 @@ def main():
             while time.monotonic()-waiting_start <= cfg['maximum_quiet_wait_seconds']:
                 sample = environment(); sample['phase'] = 'quiet_entry'
                 manifest['environment'].append(sample)
-                if not power_ok(sample):
-                    raise RuntimeError('power left stable AC during entry wait')
+                if not power_ok(sample, args.allow_battery):
+                    raise RuntimeError('power left accepted state during entry wait')
+                if historical and power_mode(sample) != manifest['power_condition']:
+                    raise RuntimeError('historical power condition changed')
                 now = time.monotonic()
                 if sample['load_average'][0] <= load_limit:
                     if quiet_start is None:
@@ -314,7 +413,7 @@ def main():
                 return 2
         executions = plan(cfg,timed)
         for item in executions:
-            item['command'] = list(map(str,[binary,'--bars',output/f'n{item["bars"]}-s{item["seed"]}.csv',
+            item['command'] = list(map(str,[binary,'--bars',output/(dataset_id(item)+'.csv'),
                                     '--spans',','.join(map(str,cfg['spans'])), '--count',item['configs'],
                                     '--layout',item['layout'],'--order',item['order'],
                                     '--capital',cfg['capital'],'--fee',cfg['fee'],'--output',output/item['id']]))
@@ -327,12 +426,14 @@ def main():
         identities = {}
         group = None
         for item in executions:
-            key = (item['bars'],item['seed'],item['configs'])
+            key = (dataset_id(item),item['configs'])
             if (*key,item['repeat']) != group:
                 group = (*key,item['repeat'])
                 sample = environment(); manifest['environment'].append(sample)
-                if timed and not power_ok(sample):
-                    raise RuntimeError('power left stable AC')
+                if timed and not power_ok(sample, args.allow_battery):
+                    raise RuntimeError('power left accepted state')
+                if timed and historical and power_mode(sample) != manifest['power_condition']:
+                    raise RuntimeError('historical power condition changed')
                 if source_files() != sources or digest(binary) != binary_hash:
                     raise RuntimeError('frozen sources/build changed')
             actual = execute(item['command'],item['id'])
@@ -348,15 +449,18 @@ def main():
                 actual['prepared_ns'] != actual['replay_ns']+actual['summary_ns'] or
                 (actual['prepared_ns'] <= 0 if timed else actual['whole_ns'] != 0)):
                 raise ValueError('invalid timing intervals')
-            reference = read_rows(output/f'n{item["bars"]}-s{item["seed"]}.reference.csv')[:item['configs']]
+            reference = read_rows(output/(dataset_id(item)+'.reference.csv'))[:item['configs']]
             summary = output/(item['id']+'.summary.csv')
             maximum_error = audit_rows(read_rows(summary),reference)
             fingerprint = digest(summary)
             if key in identities and identities[key] != fingerprint:
                 raise ValueError('C++ variants or repetitions differ bit-for-bit')
             identities[key] = fingerprint
-            observations.append({k:item[k] for k in ('id','seed','repeat','order_position')} | actual |
+            identity_fields = ('input_kind','schema_version','dataset_id','profile','input_manifest_sha256') if historical else ('seed',)
+            observations.append({k:item[k] for k in ('id','repeat','order_position',*identity_fields)} | actual |
                                 dict(summary_sha256=fingerprint, maximum_reference_absolute_error=maximum_error))
+            if historical:
+                observations[-1]['power_condition'] = manifest['power_condition']
             (output/'observations.json').write_text(json.dumps(observations,indent=2)+'\n')
             resources(); save()
             if item['order_position'] == 3:
@@ -368,8 +472,10 @@ def main():
                 if digest(output/dataset[key]) != dataset[key+'_sha256']:
                     raise RuntimeError('final dataset integrity mismatch')
         manifest['environment'].append(environment())
-        if timed and not power_ok(manifest['environment'][-1]):
+        if timed and not power_ok(manifest['environment'][-1], args.allow_battery):
             raise RuntimeError('final power state invalid')
+        if timed and historical and power_mode(manifest['environment'][-1]) != manifest['power_condition']:
+            raise RuntimeError('final historical power condition changed')
         manifest.update(status='complete',final_integrity='passed')
         return 0
     except BaseException as error:

@@ -1,0 +1,2035 @@
+{
+  "kind": "static path analysis; not timing or hardware counters",
+  "object_sha256": "7b875f7c0a55018d323e4f9f75dc63fbd380fd5ffcfab92bbc54ee041ab4b9eb",
+  "analysis_sha256": "c6630cfc512eaacb2a9d068560f69e21dd6f978f2472e0d071b3726be990afca",
+  "replay_static_instruction_count": 645,
+  "paths": [
+    {
+      "order": "strategy",
+      "layout": "history",
+      "position": "cash",
+      "start": "0xc6c",
+      "branch_choices": {
+        "0xc80": false,
+        "0xc68": false
+      },
+      "instructions": 18,
+      "mnemonic_counts": {
+        "ldr": 3,
+        "add": 2,
+        "fcmpe": 3,
+        "b.gt": 1,
+        "b": 1,
+        "fmul": 1,
+        "fadd": 1,
+        "fcsel": 2,
+        "fdiv": 1,
+        "fsub": 1,
+        "cmp": 1,
+        "b.eq": 1
+      },
+      "memory_operand_bytes": {
+        "state": {
+          "read": 0,
+          "write": 0
+        },
+        "features": {
+          "read": 16,
+          "write": 0
+        },
+        "bars": {
+          "read": 8,
+          "write": 0
+        },
+        "configs": {
+          "read": 0,
+          "write": 0
+        },
+        "rules": {
+          "read": 0,
+          "write": 0
+        }
+      },
+      "memory": [
+        {
+          "pc": "0xc6c",
+          "category": "features",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d23, [x8, x3, lsl #3]"
+        },
+        {
+          "pc": "0xc70",
+          "category": "features",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d20, [x6, x3, lsl #3]"
+        },
+        {
+          "pc": "0xc78",
+          "category": "bars",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d21, [x5, #0x8]"
+        }
+      ],
+      "path": [
+        {
+          "pc": "0xc6c",
+          "encoding": "fc637917",
+          "opcode": "ldr",
+          "operands": "d23, [x8, x3, lsl #3]"
+        },
+        {
+          "pc": "0xc70",
+          "encoding": "fc6378d4",
+          "opcode": "ldr",
+          "operands": "d20, [x6, x3, lsl #3]"
+        },
+        {
+          "pc": "0xc74",
+          "encoding": "91000463",
+          "opcode": "add",
+          "operands": "x3, x3, #0x1"
+        },
+        {
+          "pc": "0xc78",
+          "encoding": "fd4004b5",
+          "opcode": "ldr",
+          "operands": "d21, [x5, #0x8]"
+        },
+        {
+          "pc": "0xc7c",
+          "encoding": "1e7422f0",
+          "opcode": "fcmpe",
+          "operands": "d23, d20"
+        },
+        {
+          "pc": "0xc80",
+          "encoding": "5400164c",
+          "opcode": "b.gt",
+          "operands": "0xf48"
+        },
+        {
+          "pc": "0xc84",
+          "encoding": "17ffffef",
+          "opcode": "b",
+          "operands": "0xc40"
+        },
+        {
+          "pc": "0xc40",
+          "encoding": "1e7b0aa2",
+          "opcode": "fmul",
+          "operands": "d2, d21, d27"
+        },
+        {
+          "pc": "0xc44",
+          "encoding": "910060a5",
+          "opcode": "add",
+          "operands": "x5, x5, #0x18"
+        },
+        {
+          "pc": "0xc48",
+          "encoding": "1e7c2842",
+          "opcode": "fadd",
+          "operands": "d2, d2, d28"
+        },
+        {
+          "pc": "0xc4c",
+          "encoding": "1e7a2050",
+          "opcode": "fcmpe",
+          "operands": "d2, d26"
+        },
+        {
+          "pc": "0xc50",
+          "encoding": "1e7acc5a",
+          "opcode": "fcsel",
+          "operands": "d26, d2, d26, gt"
+        },
+        {
+          "pc": "0xc54",
+          "encoding": "1e7a1842",
+          "opcode": "fdiv",
+          "operands": "d2, d2, d26"
+        },
+        {
+          "pc": "0xc58",
+          "encoding": "1e623ba2",
+          "opcode": "fsub",
+          "operands": "d2, d29, d2"
+        },
+        {
+          "pc": "0xc5c",
+          "encoding": "1e792050",
+          "opcode": "fcmpe",
+          "operands": "d2, d25"
+        },
+        {
+          "pc": "0xc60",
+          "encoding": "1e79cc59",
+          "opcode": "fcsel",
+          "operands": "d25, d2, d25, gt"
+        },
+        {
+          "pc": "0xc64",
+          "encoding": "eb03003f",
+          "opcode": "cmp",
+          "operands": "x1, x3"
+        },
+        {
+          "pc": "0xc68",
+          "encoding": "54001b20",
+          "opcode": "b.eq",
+          "operands": "0xfcc"
+        }
+      ]
+    },
+    {
+      "order": "strategy",
+      "layout": "history",
+      "position": "long",
+      "start": "0xc00",
+      "branch_choices": {
+        "0xc14": true,
+        "0xff4": false,
+        "0xffc": false
+      },
+      "instructions": 20,
+      "mnemonic_counts": {
+        "ldr": 2,
+        "add": 2,
+        "ldp": 1,
+        "fcmpe": 3,
+        "b.gt": 1,
+        "fcmp": 1,
+        "b.eq": 2,
+        "cmp": 1,
+        "fmul": 1,
+        "fadd": 1,
+        "fcsel": 2,
+        "fdiv": 1,
+        "fsub": 1,
+        "b": 1
+      },
+      "memory_operand_bytes": {
+        "state": {
+          "read": 0,
+          "write": 0
+        },
+        "features": {
+          "read": 16,
+          "write": 0
+        },
+        "bars": {
+          "read": 16,
+          "write": 0
+        },
+        "configs": {
+          "read": 0,
+          "write": 0
+        },
+        "rules": {
+          "read": 0,
+          "write": 0
+        }
+      },
+      "memory": [
+        {
+          "pc": "0xc00",
+          "category": "features",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d1, [x8, x3, lsl #3]"
+        },
+        {
+          "pc": "0xc04",
+          "category": "features",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d23, [x6, x3, lsl #3]"
+        },
+        {
+          "pc": "0xc0c",
+          "category": "bars",
+          "direction": "read",
+          "bytes": 16,
+          "instruction": "ldp d22, d21, [x5]"
+        }
+      ],
+      "path": [
+        {
+          "pc": "0xc00",
+          "encoding": "fc637901",
+          "opcode": "ldr",
+          "operands": "d1, [x8, x3, lsl #3]"
+        },
+        {
+          "pc": "0xc04",
+          "encoding": "fc6378d7",
+          "opcode": "ldr",
+          "operands": "d23, [x6, x3, lsl #3]"
+        },
+        {
+          "pc": "0xc08",
+          "encoding": "91000463",
+          "opcode": "add",
+          "operands": "x3, x3, #0x1"
+        },
+        {
+          "pc": "0xc0c",
+          "encoding": "6d4054b6",
+          "opcode": "ldp",
+          "operands": "d22, d21, [x5]"
+        },
+        {
+          "pc": "0xc10",
+          "encoding": "1e772030",
+          "opcode": "fcmpe",
+          "operands": "d1, d23"
+        },
+        {
+          "pc": "0xc14",
+          "encoding": "54001eec",
+          "opcode": "b.gt",
+          "operands": "0xff0"
+        },
+        {
+          "pc": "0xff0",
+          "encoding": "1e602368",
+          "opcode": "fcmp",
+          "operands": "d27, #0.0"
+        },
+        {
+          "pc": "0xff4",
+          "encoding": "54fffac0",
+          "opcode": "b.eq",
+          "operands": "0xf4c"
+        },
+        {
+          "pc": "0xff8",
+          "encoding": "eb01007f",
+          "opcode": "cmp",
+          "operands": "x3, x1"
+        },
+        {
+          "pc": "0xffc",
+          "encoding": "54fffc20",
+          "opcode": "b.eq",
+          "operands": "0xf80"
+        },
+        {
+          "pc": "0x1000",
+          "encoding": "1e7b0ab0",
+          "opcode": "fmul",
+          "operands": "d16, d21, d27"
+        },
+        {
+          "pc": "0x1004",
+          "encoding": "910060a5",
+          "opcode": "add",
+          "operands": "x5, x5, #0x18"
+        },
+        {
+          "pc": "0x1008",
+          "encoding": "1e7c2a10",
+          "opcode": "fadd",
+          "operands": "d16, d16, d28"
+        },
+        {
+          "pc": "0x100c",
+          "encoding": "1e702350",
+          "opcode": "fcmpe",
+          "operands": "d26, d16"
+        },
+        {
+          "pc": "0x1010",
+          "encoding": "1e7a4e1a",
+          "opcode": "fcsel",
+          "operands": "d26, d16, d26, mi"
+        },
+        {
+          "pc": "0x1014",
+          "encoding": "1e7a1a10",
+          "opcode": "fdiv",
+          "operands": "d16, d16, d26"
+        },
+        {
+          "pc": "0x1018",
+          "encoding": "1e703bb0",
+          "opcode": "fsub",
+          "operands": "d16, d29, d16"
+        },
+        {
+          "pc": "0x101c",
+          "encoding": "1e702330",
+          "opcode": "fcmpe",
+          "operands": "d25, d16"
+        },
+        {
+          "pc": "0x1020",
+          "encoding": "1e794e19",
+          "opcode": "fcsel",
+          "operands": "d25, d16, d25, mi"
+        },
+        {
+          "pc": "0x1024",
+          "encoding": "17fffef7",
+          "opcode": "b",
+          "operands": "0xc00"
+        }
+      ]
+    },
+    {
+      "order": "strategy",
+      "layout": "snapshot",
+      "position": "cash",
+      "start": "0x14a0",
+      "branch_choices": {
+        "0x14b4": false,
+        "0x14bc": true,
+        "0x150c": true
+      },
+      "instructions": 20,
+      "mnemonic_counts": {
+        "ldr": 2,
+        "add": 3,
+        "ldp": 1,
+        "fcmpe": 3,
+        "b.gt": 1,
+        "fcmp": 1,
+        "b.eq": 1,
+        "fmul": 1,
+        "fadd": 1,
+        "fcsel": 2,
+        "fdiv": 1,
+        "fsub": 1,
+        "cmp": 1,
+        "b.ne": 1
+      },
+      "memory_operand_bytes": {
+        "state": {
+          "read": 0,
+          "write": 0
+        },
+        "features": {
+          "read": 16,
+          "write": 0
+        },
+        "bars": {
+          "read": 16,
+          "write": 0
+        },
+        "configs": {
+          "read": 0,
+          "write": 0
+        },
+        "rules": {
+          "read": 0,
+          "write": 0
+        }
+      },
+      "memory": [
+        {
+          "pc": "0x14a0",
+          "category": "features",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d6, [x3, x8, lsl #3]"
+        },
+        {
+          "pc": "0x14a8",
+          "category": "features",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d7, [x3]"
+        },
+        {
+          "pc": "0x14ac",
+          "category": "bars",
+          "direction": "read",
+          "bytes": 16,
+          "instruction": "ldp d24, d23, [x5]"
+        }
+      ],
+      "path": [
+        {
+          "pc": "0x14a0",
+          "encoding": "fc687866",
+          "opcode": "ldr",
+          "operands": "d6, [x3, x8, lsl #3]"
+        },
+        {
+          "pc": "0x14a4",
+          "encoding": "91000529",
+          "opcode": "add",
+          "operands": "x9, x9, #0x1"
+        },
+        {
+          "pc": "0x14a8",
+          "encoding": "fd400067",
+          "opcode": "ldr",
+          "operands": "d7, [x3]"
+        },
+        {
+          "pc": "0x14ac",
+          "encoding": "6d405cb8",
+          "opcode": "ldp",
+          "operands": "d24, d23, [x5]"
+        },
+        {
+          "pc": "0x14b0",
+          "encoding": "1e6620f0",
+          "opcode": "fcmpe",
+          "operands": "d7, d6"
+        },
+        {
+          "pc": "0x14b4",
+          "encoding": "5400040c",
+          "opcode": "b.gt",
+          "operands": "0x1534"
+        },
+        {
+          "pc": "0x14b8",
+          "encoding": "1e602368",
+          "opcode": "fcmp",
+          "operands": "d27, #0.0"
+        },
+        {
+          "pc": "0x14bc",
+          "encoding": "54000120",
+          "opcode": "b.eq",
+          "operands": "0x14e0"
+        },
+        {
+          "pc": "0x14e0",
+          "encoding": "1e7b0af7",
+          "opcode": "fmul",
+          "operands": "d23, d23, d27"
+        },
+        {
+          "pc": "0x14e4",
+          "encoding": "8b060c63",
+          "opcode": "add",
+          "operands": "x3, x3, x6, lsl #3"
+        },
+        {
+          "pc": "0x14e8",
+          "encoding": "910060a5",
+          "opcode": "add",
+          "operands": "x5, x5, #0x18"
+        },
+        {
+          "pc": "0x14ec",
+          "encoding": "1e7c2af7",
+          "opcode": "fadd",
+          "operands": "d23, d23, d28"
+        },
+        {
+          "pc": "0x14f0",
+          "encoding": "1e7a22f0",
+          "opcode": "fcmpe",
+          "operands": "d23, d26"
+        },
+        {
+          "pc": "0x14f4",
+          "encoding": "1e7acefa",
+          "opcode": "fcsel",
+          "operands": "d26, d23, d26, gt"
+        },
+        {
+          "pc": "0x14f8",
+          "encoding": "1e7a1af7",
+          "opcode": "fdiv",
+          "operands": "d23, d23, d26"
+        },
+        {
+          "pc": "0x14fc",
+          "encoding": "1e773bb7",
+          "opcode": "fsub",
+          "operands": "d23, d29, d23"
+        },
+        {
+          "pc": "0x1500",
+          "encoding": "1e7922f0",
+          "opcode": "fcmpe",
+          "operands": "d23, d25"
+        },
+        {
+          "pc": "0x1504",
+          "encoding": "1e79cef9",
+          "opcode": "fcsel",
+          "operands": "d25, d23, d25, gt"
+        },
+        {
+          "pc": "0x1508",
+          "encoding": "eb01013f",
+          "opcode": "cmp",
+          "operands": "x9, x1"
+        },
+        {
+          "pc": "0x150c",
+          "encoding": "54fffca1",
+          "opcode": "b.ne",
+          "operands": "0x14a0"
+        }
+      ]
+    },
+    {
+      "order": "strategy",
+      "layout": "snapshot",
+      "position": "long",
+      "start": "0x14a0",
+      "branch_choices": {
+        "0x14b4": true,
+        "0x1538": true,
+        "0x159c": false,
+        "0x150c": true
+      },
+      "instructions": 23,
+      "mnemonic_counts": {
+        "ldr": 2,
+        "add": 3,
+        "ldp": 1,
+        "fcmpe": 3,
+        "b.gt": 1,
+        "fcmp": 1,
+        "b.ne": 2,
+        "cmp": 2,
+        "b.eq": 1,
+        "b": 1,
+        "fmul": 1,
+        "fadd": 1,
+        "fcsel": 2,
+        "fdiv": 1,
+        "fsub": 1
+      },
+      "memory_operand_bytes": {
+        "state": {
+          "read": 0,
+          "write": 0
+        },
+        "features": {
+          "read": 16,
+          "write": 0
+        },
+        "bars": {
+          "read": 16,
+          "write": 0
+        },
+        "configs": {
+          "read": 0,
+          "write": 0
+        },
+        "rules": {
+          "read": 0,
+          "write": 0
+        }
+      },
+      "memory": [
+        {
+          "pc": "0x14a0",
+          "category": "features",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d6, [x3, x8, lsl #3]"
+        },
+        {
+          "pc": "0x14a8",
+          "category": "features",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d7, [x3]"
+        },
+        {
+          "pc": "0x14ac",
+          "category": "bars",
+          "direction": "read",
+          "bytes": 16,
+          "instruction": "ldp d24, d23, [x5]"
+        }
+      ],
+      "path": [
+        {
+          "pc": "0x14a0",
+          "encoding": "fc687866",
+          "opcode": "ldr",
+          "operands": "d6, [x3, x8, lsl #3]"
+        },
+        {
+          "pc": "0x14a4",
+          "encoding": "91000529",
+          "opcode": "add",
+          "operands": "x9, x9, #0x1"
+        },
+        {
+          "pc": "0x14a8",
+          "encoding": "fd400067",
+          "opcode": "ldr",
+          "operands": "d7, [x3]"
+        },
+        {
+          "pc": "0x14ac",
+          "encoding": "6d405cb8",
+          "opcode": "ldp",
+          "operands": "d24, d23, [x5]"
+        },
+        {
+          "pc": "0x14b0",
+          "encoding": "1e6620f0",
+          "opcode": "fcmpe",
+          "operands": "d7, d6"
+        },
+        {
+          "pc": "0x14b4",
+          "encoding": "5400040c",
+          "opcode": "b.gt",
+          "operands": "0x1534"
+        },
+        {
+          "pc": "0x1534",
+          "encoding": "1e602368",
+          "opcode": "fcmp",
+          "operands": "d27, #0.0"
+        },
+        {
+          "pc": "0x1538",
+          "encoding": "54000301",
+          "opcode": "b.ne",
+          "operands": "0x1598"
+        },
+        {
+          "pc": "0x1598",
+          "encoding": "eb01013f",
+          "opcode": "cmp",
+          "operands": "x9, x1"
+        },
+        {
+          "pc": "0x159c",
+          "encoding": "54fffe80",
+          "opcode": "b.eq",
+          "operands": "0x156c"
+        },
+        {
+          "pc": "0x15a0",
+          "encoding": "17ffffd0",
+          "opcode": "b",
+          "operands": "0x14e0"
+        },
+        {
+          "pc": "0x14e0",
+          "encoding": "1e7b0af7",
+          "opcode": "fmul",
+          "operands": "d23, d23, d27"
+        },
+        {
+          "pc": "0x14e4",
+          "encoding": "8b060c63",
+          "opcode": "add",
+          "operands": "x3, x3, x6, lsl #3"
+        },
+        {
+          "pc": "0x14e8",
+          "encoding": "910060a5",
+          "opcode": "add",
+          "operands": "x5, x5, #0x18"
+        },
+        {
+          "pc": "0x14ec",
+          "encoding": "1e7c2af7",
+          "opcode": "fadd",
+          "operands": "d23, d23, d28"
+        },
+        {
+          "pc": "0x14f0",
+          "encoding": "1e7a22f0",
+          "opcode": "fcmpe",
+          "operands": "d23, d26"
+        },
+        {
+          "pc": "0x14f4",
+          "encoding": "1e7acefa",
+          "opcode": "fcsel",
+          "operands": "d26, d23, d26, gt"
+        },
+        {
+          "pc": "0x14f8",
+          "encoding": "1e7a1af7",
+          "opcode": "fdiv",
+          "operands": "d23, d23, d26"
+        },
+        {
+          "pc": "0x14fc",
+          "encoding": "1e773bb7",
+          "opcode": "fsub",
+          "operands": "d23, d29, d23"
+        },
+        {
+          "pc": "0x1500",
+          "encoding": "1e7922f0",
+          "opcode": "fcmpe",
+          "operands": "d23, d25"
+        },
+        {
+          "pc": "0x1504",
+          "encoding": "1e79cef9",
+          "opcode": "fcsel",
+          "operands": "d25, d23, d25, gt"
+        },
+        {
+          "pc": "0x1508",
+          "encoding": "eb01013f",
+          "opcode": "cmp",
+          "operands": "x9, x1"
+        },
+        {
+          "pc": "0x150c",
+          "encoding": "54fffca1",
+          "opcode": "b.ne",
+          "operands": "0x14a0"
+        }
+      ]
+    },
+    {
+      "order": "event",
+      "layout": "history",
+      "position": "cash",
+      "start": "0xf10",
+      "branch_choices": {
+        "0xf34": false,
+        "0xf3c": false,
+        "0xf0c": false
+      },
+      "instructions": 29,
+      "mnemonic_counts": {
+        "ldp": 3,
+        "ldr": 5,
+        "madd": 2,
+        "fcmpe": 3,
+        "b.mi": 1,
+        "fcmp": 1,
+        "b.ne": 1,
+        "b": 1,
+        "fmul": 1,
+        "add": 2,
+        "fadd": 1,
+        "fcsel": 2,
+        "stur": 2,
+        "fdiv": 1,
+        "fsub": 1,
+        "cmp": 1,
+        "b.eq": 1
+      },
+      "memory_operand_bytes": {
+        "state": {
+          "read": 32,
+          "write": 16
+        },
+        "features": {
+          "read": 16,
+          "write": 0
+        },
+        "bars": {
+          "read": 16,
+          "write": 0
+        },
+        "configs": {
+          "read": 16,
+          "write": 0
+        },
+        "rules": {
+          "read": 8,
+          "write": 0
+        }
+      },
+      "memory": [
+        {
+          "pc": "0xf10",
+          "category": "configs",
+          "direction": "read",
+          "bytes": 16,
+          "instruction": "ldp x6, x5, [x8]"
+        },
+        {
+          "pc": "0xf14",
+          "category": "state",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d0, [x3, #0x8]"
+        },
+        {
+          "pc": "0xf20",
+          "category": "rules",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d28, [x12, #0x8]"
+        },
+        {
+          "pc": "0xf24",
+          "category": "features",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d16, [x4, x6, lsl #3]"
+        },
+        {
+          "pc": "0xf28",
+          "category": "features",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d17, [x4, x5, lsl #3]"
+        },
+        {
+          "pc": "0xf2c",
+          "category": "bars",
+          "direction": "read",
+          "bytes": 16,
+          "instruction": "ldp d30, d29, [x10]"
+        },
+        {
+          "pc": "0xf40",
+          "category": "state",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d25, [x3]"
+        },
+        {
+          "pc": "0xed8",
+          "category": "state",
+          "direction": "read",
+          "bytes": 16,
+          "instruction": "ldp d26, d27, [x3, #0x10]"
+        },
+        {
+          "pc": "0xef0",
+          "category": "state",
+          "direction": "write",
+          "bytes": 8,
+          "instruction": "stur d26, [x3, #-0x28]"
+        },
+        {
+          "pc": "0xf04",
+          "category": "state",
+          "direction": "write",
+          "bytes": 8,
+          "instruction": "stur d27, [x3, #-0x20]"
+        }
+      ],
+      "path": [
+        {
+          "pc": "0xf10",
+          "encoding": "a9401506",
+          "opcode": "ldp",
+          "operands": "x6, x5, [x8]"
+        },
+        {
+          "pc": "0xf14",
+          "encoding": "fd400460",
+          "opcode": "ldr",
+          "operands": "d0, [x3, #0x8]"
+        },
+        {
+          "pc": "0xf18",
+          "encoding": "9b061c26",
+          "opcode": "madd",
+          "operands": "x6, x1, x6, x7"
+        },
+        {
+          "pc": "0xf1c",
+          "encoding": "9b051c25",
+          "opcode": "madd",
+          "operands": "x5, x1, x5, x7"
+        },
+        {
+          "pc": "0xf20",
+          "encoding": "fd40059c",
+          "opcode": "ldr",
+          "operands": "d28, [x12, #0x8]"
+        },
+        {
+          "pc": "0xf24",
+          "encoding": "fc667890",
+          "opcode": "ldr",
+          "operands": "d16, [x4, x6, lsl #3]"
+        },
+        {
+          "pc": "0xf28",
+          "encoding": "fc657891",
+          "opcode": "ldr",
+          "operands": "d17, [x4, x5, lsl #3]"
+        },
+        {
+          "pc": "0xf2c",
+          "encoding": "6d40755e",
+          "opcode": "ldp",
+          "operands": "d30, d29, [x10]"
+        },
+        {
+          "pc": "0xf30",
+          "encoding": "1e702230",
+          "opcode": "fcmpe",
+          "operands": "d17, d16"
+        },
+        {
+          "pc": "0xf34",
+          "encoding": "54000a64",
+          "opcode": "b.mi",
+          "operands": "0x1080"
+        },
+        {
+          "pc": "0xf38",
+          "encoding": "1e602008",
+          "opcode": "fcmp",
+          "operands": "d0, #0.0"
+        },
+        {
+          "pc": "0xf3c",
+          "encoding": "54fffb01",
+          "opcode": "b.ne",
+          "operands": "0xe9c"
+        },
+        {
+          "pc": "0xf40",
+          "encoding": "fd400079",
+          "opcode": "ldr",
+          "operands": "d25, [x3]"
+        },
+        {
+          "pc": "0xf44",
+          "encoding": "17ffffe4",
+          "opcode": "b",
+          "operands": "0xed4"
+        },
+        {
+          "pc": "0xed4",
+          "encoding": "1e7d0800",
+          "opcode": "fmul",
+          "operands": "d0, d0, d29"
+        },
+        {
+          "pc": "0xed8",
+          "encoding": "6d416c7a",
+          "opcode": "ldp",
+          "operands": "d26, d27, [x3, #0x10]"
+        },
+        {
+          "pc": "0xedc",
+          "encoding": "91004108",
+          "opcode": "add",
+          "operands": "x8, x8, #0x10"
+        },
+        {
+          "pc": "0xee0",
+          "encoding": "9100e063",
+          "opcode": "add",
+          "operands": "x3, x3, #0x38"
+        },
+        {
+          "pc": "0xee4",
+          "encoding": "1e792800",
+          "opcode": "fadd",
+          "operands": "d0, d0, d25"
+        },
+        {
+          "pc": "0xee8",
+          "encoding": "1e602350",
+          "opcode": "fcmpe",
+          "operands": "d26, d0"
+        },
+        {
+          "pc": "0xeec",
+          "encoding": "1e7a4c1a",
+          "opcode": "fcsel",
+          "operands": "d26, d0, d26, mi"
+        },
+        {
+          "pc": "0xef0",
+          "encoding": "fc1d807a",
+          "opcode": "stur",
+          "operands": "d26, [x3, #-0x28]"
+        },
+        {
+          "pc": "0xef4",
+          "encoding": "1e7a181a",
+          "opcode": "fdiv",
+          "operands": "d26, d0, d26"
+        },
+        {
+          "pc": "0xef8",
+          "encoding": "1e7a3bfa",
+          "opcode": "fsub",
+          "operands": "d26, d31, d26"
+        },
+        {
+          "pc": "0xefc",
+          "encoding": "1e7a2370",
+          "opcode": "fcmpe",
+          "operands": "d27, d26"
+        },
+        {
+          "pc": "0xf00",
+          "encoding": "1e7b4f5b",
+          "opcode": "fcsel",
+          "operands": "d27, d26, d27, mi"
+        },
+        {
+          "pc": "0xf04",
+          "encoding": "fc1e007b",
+          "opcode": "stur",
+          "operands": "d27, [x3, #-0x20]"
+        },
+        {
+          "pc": "0xf08",
+          "encoding": "eb0b011f",
+          "opcode": "cmp",
+          "operands": "x8, x11"
+        },
+        {
+          "pc": "0xf0c",
+          "encoding": "54001ae0",
+          "opcode": "b.eq",
+          "operands": "0x1268"
+        }
+      ]
+    },
+    {
+      "order": "event",
+      "layout": "history",
+      "position": "long",
+      "start": "0xf10",
+      "branch_choices": {
+        "0xf34": true,
+        "0x1088": true,
+        "0xf0c": false
+      },
+      "instructions": 30,
+      "mnemonic_counts": {
+        "ldp": 3,
+        "ldr": 5,
+        "madd": 2,
+        "fcmpe": 3,
+        "b.mi": 1,
+        "movi": 1,
+        "fcmp": 1,
+        "b.ne": 1,
+        "b": 1,
+        "fmul": 1,
+        "add": 2,
+        "fadd": 1,
+        "fcsel": 2,
+        "stur": 2,
+        "fdiv": 1,
+        "fsub": 1,
+        "cmp": 1,
+        "b.eq": 1
+      },
+      "memory_operand_bytes": {
+        "state": {
+          "read": 32,
+          "write": 16
+        },
+        "features": {
+          "read": 16,
+          "write": 0
+        },
+        "bars": {
+          "read": 16,
+          "write": 0
+        },
+        "configs": {
+          "read": 16,
+          "write": 0
+        },
+        "rules": {
+          "read": 8,
+          "write": 0
+        }
+      },
+      "memory": [
+        {
+          "pc": "0xf10",
+          "category": "configs",
+          "direction": "read",
+          "bytes": 16,
+          "instruction": "ldp x6, x5, [x8]"
+        },
+        {
+          "pc": "0xf14",
+          "category": "state",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d0, [x3, #0x8]"
+        },
+        {
+          "pc": "0xf20",
+          "category": "rules",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d28, [x12, #0x8]"
+        },
+        {
+          "pc": "0xf24",
+          "category": "features",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d16, [x4, x6, lsl #3]"
+        },
+        {
+          "pc": "0xf28",
+          "category": "features",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d17, [x4, x5, lsl #3]"
+        },
+        {
+          "pc": "0xf2c",
+          "category": "bars",
+          "direction": "read",
+          "bytes": 16,
+          "instruction": "ldp d30, d29, [x10]"
+        },
+        {
+          "pc": "0xf40",
+          "category": "state",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d25, [x3]"
+        },
+        {
+          "pc": "0xed8",
+          "category": "state",
+          "direction": "read",
+          "bytes": 16,
+          "instruction": "ldp d26, d27, [x3, #0x10]"
+        },
+        {
+          "pc": "0xef0",
+          "category": "state",
+          "direction": "write",
+          "bytes": 8,
+          "instruction": "stur d26, [x3, #-0x28]"
+        },
+        {
+          "pc": "0xf04",
+          "category": "state",
+          "direction": "write",
+          "bytes": 8,
+          "instruction": "stur d27, [x3, #-0x20]"
+        }
+      ],
+      "path": [
+        {
+          "pc": "0xf10",
+          "encoding": "a9401506",
+          "opcode": "ldp",
+          "operands": "x6, x5, [x8]"
+        },
+        {
+          "pc": "0xf14",
+          "encoding": "fd400460",
+          "opcode": "ldr",
+          "operands": "d0, [x3, #0x8]"
+        },
+        {
+          "pc": "0xf18",
+          "encoding": "9b061c26",
+          "opcode": "madd",
+          "operands": "x6, x1, x6, x7"
+        },
+        {
+          "pc": "0xf1c",
+          "encoding": "9b051c25",
+          "opcode": "madd",
+          "operands": "x5, x1, x5, x7"
+        },
+        {
+          "pc": "0xf20",
+          "encoding": "fd40059c",
+          "opcode": "ldr",
+          "operands": "d28, [x12, #0x8]"
+        },
+        {
+          "pc": "0xf24",
+          "encoding": "fc667890",
+          "opcode": "ldr",
+          "operands": "d16, [x4, x6, lsl #3]"
+        },
+        {
+          "pc": "0xf28",
+          "encoding": "fc657891",
+          "opcode": "ldr",
+          "operands": "d17, [x4, x5, lsl #3]"
+        },
+        {
+          "pc": "0xf2c",
+          "encoding": "6d40755e",
+          "opcode": "ldp",
+          "operands": "d30, d29, [x10]"
+        },
+        {
+          "pc": "0xf30",
+          "encoding": "1e702230",
+          "opcode": "fcmpe",
+          "operands": "d17, d16"
+        },
+        {
+          "pc": "0xf34",
+          "encoding": "54000a64",
+          "opcode": "b.mi",
+          "operands": "0x1080"
+        },
+        {
+          "pc": "0x1080",
+          "encoding": "2f00e419",
+          "opcode": "movi",
+          "operands": "d25, #0000000000000000"
+        },
+        {
+          "pc": "0x1084",
+          "encoding": "1e792000",
+          "opcode": "fcmp",
+          "operands": "d0, d25"
+        },
+        {
+          "pc": "0x1088",
+          "encoding": "54fff5c1",
+          "opcode": "b.ne",
+          "operands": "0xf40"
+        },
+        {
+          "pc": "0xf40",
+          "encoding": "fd400079",
+          "opcode": "ldr",
+          "operands": "d25, [x3]"
+        },
+        {
+          "pc": "0xf44",
+          "encoding": "17ffffe4",
+          "opcode": "b",
+          "operands": "0xed4"
+        },
+        {
+          "pc": "0xed4",
+          "encoding": "1e7d0800",
+          "opcode": "fmul",
+          "operands": "d0, d0, d29"
+        },
+        {
+          "pc": "0xed8",
+          "encoding": "6d416c7a",
+          "opcode": "ldp",
+          "operands": "d26, d27, [x3, #0x10]"
+        },
+        {
+          "pc": "0xedc",
+          "encoding": "91004108",
+          "opcode": "add",
+          "operands": "x8, x8, #0x10"
+        },
+        {
+          "pc": "0xee0",
+          "encoding": "9100e063",
+          "opcode": "add",
+          "operands": "x3, x3, #0x38"
+        },
+        {
+          "pc": "0xee4",
+          "encoding": "1e792800",
+          "opcode": "fadd",
+          "operands": "d0, d0, d25"
+        },
+        {
+          "pc": "0xee8",
+          "encoding": "1e602350",
+          "opcode": "fcmpe",
+          "operands": "d26, d0"
+        },
+        {
+          "pc": "0xeec",
+          "encoding": "1e7a4c1a",
+          "opcode": "fcsel",
+          "operands": "d26, d0, d26, mi"
+        },
+        {
+          "pc": "0xef0",
+          "encoding": "fc1d807a",
+          "opcode": "stur",
+          "operands": "d26, [x3, #-0x28]"
+        },
+        {
+          "pc": "0xef4",
+          "encoding": "1e7a181a",
+          "opcode": "fdiv",
+          "operands": "d26, d0, d26"
+        },
+        {
+          "pc": "0xef8",
+          "encoding": "1e7a3bfa",
+          "opcode": "fsub",
+          "operands": "d26, d31, d26"
+        },
+        {
+          "pc": "0xefc",
+          "encoding": "1e7a2370",
+          "opcode": "fcmpe",
+          "operands": "d27, d26"
+        },
+        {
+          "pc": "0xf00",
+          "encoding": "1e7b4f5b",
+          "opcode": "fcsel",
+          "operands": "d27, d26, d27, mi"
+        },
+        {
+          "pc": "0xf04",
+          "encoding": "fc1e007b",
+          "opcode": "stur",
+          "operands": "d27, [x3, #-0x20]"
+        },
+        {
+          "pc": "0xf08",
+          "encoding": "eb0b011f",
+          "opcode": "cmp",
+          "operands": "x8, x11"
+        },
+        {
+          "pc": "0xf0c",
+          "encoding": "54001ae0",
+          "opcode": "b.eq",
+          "operands": "0x1268"
+        }
+      ]
+    },
+    {
+      "order": "event",
+      "layout": "snapshot",
+      "position": "cash",
+      "start": "0xe24",
+      "branch_choices": {
+        "0xe48": false,
+        "0xe50": false,
+        "0xe20": false
+      },
+      "instructions": 29,
+      "mnemonic_counts": {
+        "ldp": 3,
+        "ldr": 5,
+        "add": 4,
+        "fcmpe": 3,
+        "b.mi": 1,
+        "fcmp": 1,
+        "b.ne": 1,
+        "b": 1,
+        "fmul": 1,
+        "fadd": 1,
+        "fcsel": 2,
+        "stur": 2,
+        "fdiv": 1,
+        "fsub": 1,
+        "cmp": 1,
+        "b.eq": 1
+      },
+      "memory_operand_bytes": {
+        "state": {
+          "read": 32,
+          "write": 16
+        },
+        "features": {
+          "read": 16,
+          "write": 0
+        },
+        "bars": {
+          "read": 16,
+          "write": 0
+        },
+        "configs": {
+          "read": 16,
+          "write": 0
+        },
+        "rules": {
+          "read": 8,
+          "write": 0
+        }
+      },
+      "memory": [
+        {
+          "pc": "0xe24",
+          "category": "configs",
+          "direction": "read",
+          "bytes": 16,
+          "instruction": "ldp x8, x5, [x9]"
+        },
+        {
+          "pc": "0xe28",
+          "category": "state",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d0, [x3, #0x8]"
+        },
+        {
+          "pc": "0xe34",
+          "category": "rules",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d28, [x12, #0x8]"
+        },
+        {
+          "pc": "0xe38",
+          "category": "features",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d16, [x4, x8, lsl #3]"
+        },
+        {
+          "pc": "0xe3c",
+          "category": "features",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d17, [x4, x5, lsl #3]"
+        },
+        {
+          "pc": "0xe40",
+          "category": "bars",
+          "direction": "read",
+          "bytes": 16,
+          "instruction": "ldp d30, d29, [x14]"
+        },
+        {
+          "pc": "0xe54",
+          "category": "state",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d25, [x3]"
+        },
+        {
+          "pc": "0xdec",
+          "category": "state",
+          "direction": "read",
+          "bytes": 16,
+          "instruction": "ldp d26, d27, [x3, #0x10]"
+        },
+        {
+          "pc": "0xe04",
+          "category": "state",
+          "direction": "write",
+          "bytes": 8,
+          "instruction": "stur d26, [x3, #-0x28]"
+        },
+        {
+          "pc": "0xe18",
+          "category": "state",
+          "direction": "write",
+          "bytes": 8,
+          "instruction": "stur d27, [x3, #-0x20]"
+        }
+      ],
+      "path": [
+        {
+          "pc": "0xe24",
+          "encoding": "a9401528",
+          "opcode": "ldp",
+          "operands": "x8, x5, [x9]"
+        },
+        {
+          "pc": "0xe28",
+          "encoding": "fd400460",
+          "opcode": "ldr",
+          "operands": "d0, [x3, #0x8]"
+        },
+        {
+          "pc": "0xe2c",
+          "encoding": "8b0801a8",
+          "opcode": "add",
+          "operands": "x8, x13, x8"
+        },
+        {
+          "pc": "0xe30",
+          "encoding": "8b0501a5",
+          "opcode": "add",
+          "operands": "x5, x13, x5"
+        },
+        {
+          "pc": "0xe34",
+          "encoding": "fd40059c",
+          "opcode": "ldr",
+          "operands": "d28, [x12, #0x8]"
+        },
+        {
+          "pc": "0xe38",
+          "encoding": "fc687890",
+          "opcode": "ldr",
+          "operands": "d16, [x4, x8, lsl #3]"
+        },
+        {
+          "pc": "0xe3c",
+          "encoding": "fc657891",
+          "opcode": "ldr",
+          "operands": "d17, [x4, x5, lsl #3]"
+        },
+        {
+          "pc": "0xe40",
+          "encoding": "6d4075de",
+          "opcode": "ldp",
+          "operands": "d30, d29, [x14]"
+        },
+        {
+          "pc": "0xe44",
+          "encoding": "1e702230",
+          "opcode": "fcmpe",
+          "operands": "d17, d16"
+        },
+        {
+          "pc": "0xe48",
+          "encoding": "54001424",
+          "opcode": "b.mi",
+          "operands": "0x10cc"
+        },
+        {
+          "pc": "0xe4c",
+          "encoding": "1e602008",
+          "opcode": "fcmp",
+          "operands": "d0, #0.0"
+        },
+        {
+          "pc": "0xe50",
+          "encoding": "54fffb01",
+          "opcode": "b.ne",
+          "operands": "0xdb0"
+        },
+        {
+          "pc": "0xe54",
+          "encoding": "fd400079",
+          "opcode": "ldr",
+          "operands": "d25, [x3]"
+        },
+        {
+          "pc": "0xe58",
+          "encoding": "17ffffe4",
+          "opcode": "b",
+          "operands": "0xde8"
+        },
+        {
+          "pc": "0xde8",
+          "encoding": "1e7d0800",
+          "opcode": "fmul",
+          "operands": "d0, d0, d29"
+        },
+        {
+          "pc": "0xdec",
+          "encoding": "6d416c7a",
+          "opcode": "ldp",
+          "operands": "d26, d27, [x3, #0x10]"
+        },
+        {
+          "pc": "0xdf0",
+          "encoding": "91004129",
+          "opcode": "add",
+          "operands": "x9, x9, #0x10"
+        },
+        {
+          "pc": "0xdf4",
+          "encoding": "9100e063",
+          "opcode": "add",
+          "operands": "x3, x3, #0x38"
+        },
+        {
+          "pc": "0xdf8",
+          "encoding": "1e792800",
+          "opcode": "fadd",
+          "operands": "d0, d0, d25"
+        },
+        {
+          "pc": "0xdfc",
+          "encoding": "1e602350",
+          "opcode": "fcmpe",
+          "operands": "d26, d0"
+        },
+        {
+          "pc": "0xe00",
+          "encoding": "1e7a4c1a",
+          "opcode": "fcsel",
+          "operands": "d26, d0, d26, mi"
+        },
+        {
+          "pc": "0xe04",
+          "encoding": "fc1d807a",
+          "opcode": "stur",
+          "operands": "d26, [x3, #-0x28]"
+        },
+        {
+          "pc": "0xe08",
+          "encoding": "1e7a181a",
+          "opcode": "fdiv",
+          "operands": "d26, d0, d26"
+        },
+        {
+          "pc": "0xe0c",
+          "encoding": "1e7a3bfa",
+          "opcode": "fsub",
+          "operands": "d26, d31, d26"
+        },
+        {
+          "pc": "0xe10",
+          "encoding": "1e7a2370",
+          "opcode": "fcmpe",
+          "operands": "d27, d26"
+        },
+        {
+          "pc": "0xe14",
+          "encoding": "1e7b4f5b",
+          "opcode": "fcsel",
+          "operands": "d27, d26, d27, mi"
+        },
+        {
+          "pc": "0xe18",
+          "encoding": "fc1e007b",
+          "opcode": "stur",
+          "operands": "d27, [x3, #-0x20]"
+        },
+        {
+          "pc": "0xe1c",
+          "encoding": "eb0b013f",
+          "opcode": "cmp",
+          "operands": "x9, x11"
+        },
+        {
+          "pc": "0xe20",
+          "encoding": "54001c20",
+          "opcode": "b.eq",
+          "operands": "0x11a4"
+        }
+      ]
+    },
+    {
+      "order": "event",
+      "layout": "snapshot",
+      "position": "long",
+      "start": "0xe24",
+      "branch_choices": {
+        "0xe48": true,
+        "0x10d4": true,
+        "0xe20": false
+      },
+      "instructions": 30,
+      "mnemonic_counts": {
+        "ldp": 3,
+        "ldr": 5,
+        "add": 4,
+        "fcmpe": 3,
+        "b.mi": 1,
+        "movi": 1,
+        "fcmp": 1,
+        "b.ne": 1,
+        "b": 1,
+        "fmul": 1,
+        "fadd": 1,
+        "fcsel": 2,
+        "stur": 2,
+        "fdiv": 1,
+        "fsub": 1,
+        "cmp": 1,
+        "b.eq": 1
+      },
+      "memory_operand_bytes": {
+        "state": {
+          "read": 32,
+          "write": 16
+        },
+        "features": {
+          "read": 16,
+          "write": 0
+        },
+        "bars": {
+          "read": 16,
+          "write": 0
+        },
+        "configs": {
+          "read": 16,
+          "write": 0
+        },
+        "rules": {
+          "read": 8,
+          "write": 0
+        }
+      },
+      "memory": [
+        {
+          "pc": "0xe24",
+          "category": "configs",
+          "direction": "read",
+          "bytes": 16,
+          "instruction": "ldp x8, x5, [x9]"
+        },
+        {
+          "pc": "0xe28",
+          "category": "state",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d0, [x3, #0x8]"
+        },
+        {
+          "pc": "0xe34",
+          "category": "rules",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d28, [x12, #0x8]"
+        },
+        {
+          "pc": "0xe38",
+          "category": "features",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d16, [x4, x8, lsl #3]"
+        },
+        {
+          "pc": "0xe3c",
+          "category": "features",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d17, [x4, x5, lsl #3]"
+        },
+        {
+          "pc": "0xe40",
+          "category": "bars",
+          "direction": "read",
+          "bytes": 16,
+          "instruction": "ldp d30, d29, [x14]"
+        },
+        {
+          "pc": "0xe54",
+          "category": "state",
+          "direction": "read",
+          "bytes": 8,
+          "instruction": "ldr d25, [x3]"
+        },
+        {
+          "pc": "0xdec",
+          "category": "state",
+          "direction": "read",
+          "bytes": 16,
+          "instruction": "ldp d26, d27, [x3, #0x10]"
+        },
+        {
+          "pc": "0xe04",
+          "category": "state",
+          "direction": "write",
+          "bytes": 8,
+          "instruction": "stur d26, [x3, #-0x28]"
+        },
+        {
+          "pc": "0xe18",
+          "category": "state",
+          "direction": "write",
+          "bytes": 8,
+          "instruction": "stur d27, [x3, #-0x20]"
+        }
+      ],
+      "path": [
+        {
+          "pc": "0xe24",
+          "encoding": "a9401528",
+          "opcode": "ldp",
+          "operands": "x8, x5, [x9]"
+        },
+        {
+          "pc": "0xe28",
+          "encoding": "fd400460",
+          "opcode": "ldr",
+          "operands": "d0, [x3, #0x8]"
+        },
+        {
+          "pc": "0xe2c",
+          "encoding": "8b0801a8",
+          "opcode": "add",
+          "operands": "x8, x13, x8"
+        },
+        {
+          "pc": "0xe30",
+          "encoding": "8b0501a5",
+          "opcode": "add",
+          "operands": "x5, x13, x5"
+        },
+        {
+          "pc": "0xe34",
+          "encoding": "fd40059c",
+          "opcode": "ldr",
+          "operands": "d28, [x12, #0x8]"
+        },
+        {
+          "pc": "0xe38",
+          "encoding": "fc687890",
+          "opcode": "ldr",
+          "operands": "d16, [x4, x8, lsl #3]"
+        },
+        {
+          "pc": "0xe3c",
+          "encoding": "fc657891",
+          "opcode": "ldr",
+          "operands": "d17, [x4, x5, lsl #3]"
+        },
+        {
+          "pc": "0xe40",
+          "encoding": "6d4075de",
+          "opcode": "ldp",
+          "operands": "d30, d29, [x14]"
+        },
+        {
+          "pc": "0xe44",
+          "encoding": "1e702230",
+          "opcode": "fcmpe",
+          "operands": "d17, d16"
+        },
+        {
+          "pc": "0xe48",
+          "encoding": "54001424",
+          "opcode": "b.mi",
+          "operands": "0x10cc"
+        },
+        {
+          "pc": "0x10cc",
+          "encoding": "2f00e419",
+          "opcode": "movi",
+          "operands": "d25, #0000000000000000"
+        },
+        {
+          "pc": "0x10d0",
+          "encoding": "1e792000",
+          "opcode": "fcmp",
+          "operands": "d0, d25"
+        },
+        {
+          "pc": "0x10d4",
+          "encoding": "54ffec01",
+          "opcode": "b.ne",
+          "operands": "0xe54"
+        },
+        {
+          "pc": "0xe54",
+          "encoding": "fd400079",
+          "opcode": "ldr",
+          "operands": "d25, [x3]"
+        },
+        {
+          "pc": "0xe58",
+          "encoding": "17ffffe4",
+          "opcode": "b",
+          "operands": "0xde8"
+        },
+        {
+          "pc": "0xde8",
+          "encoding": "1e7d0800",
+          "opcode": "fmul",
+          "operands": "d0, d0, d29"
+        },
+        {
+          "pc": "0xdec",
+          "encoding": "6d416c7a",
+          "opcode": "ldp",
+          "operands": "d26, d27, [x3, #0x10]"
+        },
+        {
+          "pc": "0xdf0",
+          "encoding": "91004129",
+          "opcode": "add",
+          "operands": "x9, x9, #0x10"
+        },
+        {
+          "pc": "0xdf4",
+          "encoding": "9100e063",
+          "opcode": "add",
+          "operands": "x3, x3, #0x38"
+        },
+        {
+          "pc": "0xdf8",
+          "encoding": "1e792800",
+          "opcode": "fadd",
+          "operands": "d0, d0, d25"
+        },
+        {
+          "pc": "0xdfc",
+          "encoding": "1e602350",
+          "opcode": "fcmpe",
+          "operands": "d26, d0"
+        },
+        {
+          "pc": "0xe00",
+          "encoding": "1e7a4c1a",
+          "opcode": "fcsel",
+          "operands": "d26, d0, d26, mi"
+        },
+        {
+          "pc": "0xe04",
+          "encoding": "fc1d807a",
+          "opcode": "stur",
+          "operands": "d26, [x3, #-0x28]"
+        },
+        {
+          "pc": "0xe08",
+          "encoding": "1e7a181a",
+          "opcode": "fdiv",
+          "operands": "d26, d0, d26"
+        },
+        {
+          "pc": "0xe0c",
+          "encoding": "1e7a3bfa",
+          "opcode": "fsub",
+          "operands": "d26, d31, d26"
+        },
+        {
+          "pc": "0xe10",
+          "encoding": "1e7a2370",
+          "opcode": "fcmpe",
+          "operands": "d27, d26"
+        },
+        {
+          "pc": "0xe14",
+          "encoding": "1e7b4f5b",
+          "opcode": "fcsel",
+          "operands": "d27, d26, d27, mi"
+        },
+        {
+          "pc": "0xe18",
+          "encoding": "fc1e007b",
+          "opcode": "stur",
+          "operands": "d27, [x3, #-0x20]"
+        },
+        {
+          "pc": "0xe1c",
+          "encoding": "eb0b013f",
+          "opcode": "cmp",
+          "operands": "x9, x11"
+        },
+        {
+          "pc": "0xe20",
+          "encoding": "54001c20",
+          "opcode": "b.eq",
+          "operands": "0x11a4"
+        }
+      ]
+    }
+  ],
+  "raw_summary_sha256": "af2006a7f002a3fa27f6eba8bab155c279d93e20c86fba4d16792c6e495cda24",
+  "workload": {
+    "profile": "directional",
+    "bars": 32768,
+    "windows": 48,
+    "configs": 1128,
+    "warmup": 96,
+    "eligible_updates": 36854016
+  },
+  "coordinate_spacing_bytes": {
+    "history": {
+      "adjacent_bars": 8,
+      "adjacent_windows": 262144
+    },
+    "snapshot": {
+      "adjacent_bars": 384,
+      "adjacent_windows": 8
+    }
+  },
+  "limits": [
+    "Counts follow reviewed unchanged-position paths, excluding first/final bars and the event-first outer-loop boundary.",
+    "Instruction counts are static path counts, not measured retired instructions or cycle costs.",
+    "Operand bytes are bytes named by explicit load/store instructions, not cache misses or DRAM traffic.",
+    "Account loads/stores outside the strategy-first inner loop remain necessary.",
+    "Hardware counter attribution was unavailable through the checked setup."
+  ]
+}

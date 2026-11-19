@@ -1,2 +1,7 @@
 # Preserve the retained CSV bytes, including their standard CRLF record endings.
 studies/barrier-options/results/*.csv -text whitespace=cr-at-eol
+studies/strategy-loop/results/*.csv -text whitespace=cr-at-eol
+studies/strategy-loop/figures/*.csv -text whitespace=cr-at-eol
+
+# Matplotlib emits trailing spaces in SVG path data. Retain the original exports.
+studies/**/figures/*.svg -text whitespace=-blank-at-eol

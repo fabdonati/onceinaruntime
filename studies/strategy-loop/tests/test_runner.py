@@ -5,10 +5,41 @@ import sys
 import unittest
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'analysis'))
-from run import ORDERS, STUDY, audit_rows, plan, validate_config
+from run import ORDERS, STUDY, audit_rows, plan, validate_config, power_ok, verification_matches
 
 
 class CampaignChecks(unittest.TestCase):
+    def test_historical_matrix_rotation_and_gate_subset(self):
+        main=json.loads((STUDY/'configs/historical-main.json').read_text())
+        pilot=json.loads((STUDY/'configs/historical-pilot.json').read_text())
+        for cfg in (main,pilot): validate_config(cfg)
+        self.assertEqual(len(plan(main,True)),384)
+        self.assertEqual(len(plan(main,False)),48)
+        self.assertEqual(len(plan(pilot,True)),48)
+        rows=plan(main,True)
+        self.assertEqual(len({r['id'] for r in rows}),384)
+        self.assertTrue(all('seed' not in r for r in rows))
+        self.assertEqual(len({(r['dataset_id'],r['configs']) for r in rows if r['order_position']==0 and r['id']==next(x['id'] for x in rows if x['repeat']==r['repeat'])}),8)
+        verified=dict(status='complete',final_integrity='passed',timed=False,source_sha256={},binary_sha256='binary',config=main,observations=48)
+        self.assertTrue(verification_matches(verified,pilot,{},'binary','different-config'))
+        bad=copy.deepcopy(pilot); bad['input_manifest_sha256']='0'*64
+        self.assertFalse(verification_matches(verified,bad,{},'binary','different-config'))
+        self.assertFalse(verification_matches(dict(verified,observations=47),pilot,{},'binary','different-config'))
+    def test_power_override_is_explicit_and_rejects_failed_queries(self):
+        ac = dict(power=dict(returncode=0, stdout="Now drawing from 'AC Power'; charged"))
+        battery = dict(power=dict(returncode=0, stdout="Now drawing from 'Battery Power'; discharging"))
+        self.assertTrue(power_ok(ac))
+        self.assertFalse(power_ok(battery))
+        self.assertTrue(power_ok(battery, allow_battery=True))
+        self.assertTrue(power_ok(ac, allow_battery=True))
+        finishing = dict(power=dict(returncode=0, stdout="Now drawing from 'AC Power'\n"
+                                   " -InternalBattery-0\t99%; finishing charge; 0:20 remaining present: true\n"))
+        self.assertTrue(power_ok(finishing))
+        self.assertFalse(power_ok(dict(power=dict(returncode=0, stdout='finishing charge'))))
+        for sample in (dict(power=dict(returncode=1, stdout=battery['power']['stdout'])),
+                       dict(power=dict(returncode=0, stdout='unknown')), dict(power=dict(error='failed'))):
+            self.assertFalse(power_ok(sample, allow_battery=True))
+
     def test_balanced_positions_and_predecessors(self):
         self.assertEqual(len(set(ORDERS)),4)
         for position in range(4):

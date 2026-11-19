@@ -15,6 +15,7 @@ from inputs import synthetic, write_bars
 from reference import replay
 
 BINARY = os.environ.get('STRATEGY_BINARY')
+MANUAL_BINARY = os.environ.get('STRATEGY_MANUAL_BINARY')
 INTEGER_FIELDS = {'config', 'fast', 'slow', 'bar', 'target_long', 'opening_event', 'trades'}
 
 
@@ -30,10 +31,10 @@ class EngineParity(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
 
-    def invoke(self, bars, spans, order='strategy', layout='history', count=None, extra=()):
+    def invoke(self, bars, spans, order='strategy', layout='history', count=None, extra=(), binary=BINARY):
         write_bars(self.root/'bars.csv', bars)
         prefix = self.root / (order+'-'+layout)
-        command = [BINARY, '--bars', str(self.root/'bars.csv'), '--spans', ','.join(map(str, spans)),
+        command = [binary, '--bars', str(self.root/'bars.csv'), '--spans', ','.join(map(str, spans)),
                    '--layout', layout, '--order', order, '--output', str(prefix)]
         if count is not None:
             command += ['--count', str(count)]
@@ -83,6 +84,20 @@ class EngineParity(unittest.TestCase):
                                        [x for x in extra if x != '--trace'])
                 self.assertEqual(plain.returncode, 0, plain.stderr)
                 self.assertEqual(Path(str(prefix)+'.summary.csv').read_bytes(), payload[0])
+                if MANUAL_BINARY:
+                    # Same independent oracle and boundary fixtures, both trace and
+                    # actual no-trace kernels. Compare serialized values exactly.
+                    manual, _ = self.invoke(bars, spans, order, layout, count, extra,
+                                            binary=MANUAL_BINARY)
+                    self.assertEqual(manual.returncode, 0, manual.stderr)
+                    manual_payload = tuple(Path(str(prefix)+'.'+suffix+'.csv').read_bytes()
+                                           for suffix in ('summary', 'trace', 'features'))
+                    self.assertEqual(manual_payload, payload, 'manual indexing must match mdspan exactly')
+                    manual_plain, _ = self.invoke(bars, spans, order, layout, count,
+                                                  [x for x in extra if x != '--trace'],
+                                                  binary=MANUAL_BINARY)
+                    self.assertEqual(manual_plain.returncode, 0, manual_plain.stderr)
+                    self.assertEqual(Path(str(prefix)+'.summary.csv').read_bytes(), payload[0])
 
     def test_deterministic_boundary_accounts(self):
         for closes in ([100.]*8, [100.,110.,120.,80.,90.], [100.,110.,120.,102.],
@@ -100,6 +115,14 @@ class EngineParity(unittest.TestCase):
             with self.subTest(seed=seed):
                 self.check_case(synthetic(65, seed), [2,3,5,9], count=5)
         self.check_case(synthetic(18, 17), [2,3,5], fee=0.)
+
+    @unittest.skipUnless(os.environ.get('STRATEGY_HISTORICAL_CSV'), 'optional local historical fixture')
+    def test_real_excerpts_including_overnight(self):
+        rows=read(Path(os.environ['STRATEGY_HISTORICAL_CSV']))
+        bars=[(int(r['timestamp']),float(r['open']),float(r['close'])) for r in rows]
+        boundary=next(i for i in range(128,len(bars)-128) if bars[i][0]-bars[i-1][0]>60)
+        for excerpt in (bars[:256],bars[boundary-128:boundary+128]):
+            self.check_case(excerpt,list(range(2,97,2)),count=64)
 
     def test_current_close_cannot_change_current_opening(self):
         bars = synthetic(16, 11)

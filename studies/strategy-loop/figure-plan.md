@@ -1,6 +1,43 @@
 # Article and figure plan
 
-Updated 16 November 2026. The engine and independent accounting checks now pass, including the untimed scale matrix. The article contains a checked synthetic account heatmap and the traversal schematic. The completed 576-observation main run supplies performance charts, with the recorded host-load limitation beside the claims. `previews/figures/` contains the earlier fictional return/timing designs; the traversal image is separately labelled schematic.
+Updated 19 November 2026. The draft now uses the completed historical QQQ
+campaign: 48 untimed checks, 48 pilot and 384 main observations. The old synthetic
+figures remain supporting artifacts; fictional previews are not measured results.
+
+The current figures have distinct jobs:
+
+| Position | Asset | Purpose |
+| --- | --- | --- |
+| Opening | `figures/08-historical-accounts.png` | Show the 1,128 required account outcomes, using the preselected directional window and actual signed returns |
+| Loop explanation | `previews/figures/02-traversal-and-layout.png` | Explain logical traversal versus physical storage; schematic only |
+| Historical inputs | `figures/05-historical-profiles.png` | Three profile cards combine normalized price paths, activity strips and prominent change rates; visually different prices have similar measured trading activity |
+| Main result | `figures/06-historical-ratios.png` | Crossover chart with all 32 observations for the directional/full-grid example; table of median paired ratios across all 12 workloads shows the repeated reversal |
+| Compiler explanation | `figures/09-account-state-mechanism.png` | Account-file metaphor: keep one record open as bars advance versus fetch/update/return records for each bar. Show register retention and the 32 B read / 16 B write steady event-first path; static inspected operations, not timings or DRAM traffic |
+| Complete cost | `figures/07-historical-whole.png` | Show actual stage costs and all total observations for the predetermined directional/N32768/K64 cell |
+
+All historical plots use the publication's warm paper, upright Georgia headings,
+Arial labels and blue/red palette. Color meaning is labelled within each chart.
+The contour uses zero-centered unequal numeric ranges, explicitly disclosed;
+no hard-coded synthetic return scale or financial winner selection. Raw market
+prices remain local. Derived account summaries, all 384 timing observations,
+activity aggregates and source hashes are retained alongside the figures/results.
+
+The mechanism illustration was redesigned on 17 November as two account-file
+scenes, with the existing warm paper, upright Georgia and blue/red palette.
+Both read/write arrows return to account A; B and C show the later accounts.
+The sheets and array rows are schematic, not register allocation or a byte scale.
+Next: review this replacement in the compiler-explanation passage. No new
+measurements are required for the visual change.
+
+The following original specifications describe the development rationale; the
+current asset table above governs the manuscript.
+
+The author accepted the replacement designs on 19 November. Profile cards and
+the crossover chart now appear in the manuscript, with matching captions and
+the same audited evidence. Their maintained renderer is
+`analysis/plot_historical_editorial.py`, also called by the full historical
+plot pipeline. Next: review the updated complete reading sequence. No additional
+timing campaign is needed for these figure changes.
 
 ## Editorial question
 
@@ -60,7 +97,7 @@ No Sharpe-ratio ranking, p99 timing claim, annualized extrapolation or probabili
 - Invalid fast >= slow cells are blank, never encoded as a zero-return result.
 - A common diverging color scale centered at zero; label it explicitly as net period return. Blue/red here encode the signed financial outcome, separately from traversal colors in later figures.
 - Caption: context/output requirement, not evidence of a profitable strategy. Do not print a second identical map merely to show implementation agreement.
-- Real figure input: verified per-config results, frozen grid/data/accounting metadata. The checked synthetic example is in `figures/`; no observed-market input is selected.
+- Real figure input: verified per-config results, frozen grid/data/accounting metadata. The original synthetic example remains in `figures/`; the current illustration uses the preselected historical directional/long window.
 
 ### 2. Two routes through the same work
 
@@ -92,6 +129,28 @@ Follow the current `publication/visual-style.json`: warm paper #FCE9D7, ink #0F0
 `previews/draw_previews.py` generates a four-card storyboard plus individual PNG/SVG figures. `previews/mock-data.json` contains design-only fabricated values, never measurements. All result-preview assets carry FICTIONAL VALUES / NOT BENCHMARK RESULTS. The traversal diagram is separately labelled schematic. No performance direction, crossover, return surface or stage proportion in a preview is a prediction.
 
 ## Status and next step
+
+Two alternative presentations of the full parameter results are generated by
+`previews/ema_result_maps.py`: a filled contour map in fast/slow coordinates,
+and a scatter plot of net return against maximum drawdown. Both read all 1,128
+checked rows from `figures/accounts.csv`. Contours explicitly interpolate between
+tested points; the scatter labels fixed 2/4, 10/30 and 32/96 examples. These are
+synthetic outcome illustrations, separate from timing evidence. Next: compare
+the contour design with the existing heatmap before replacing the article asset.
+The author prefers the contour design. Its revised scale keeps zero paper-neutral,
+losses red and gains progressively light blue through navy, using fixed 10-point
+return bands and a proportional colorbar. Labels on the darker contours are white.
+Next: review the revised color treatment before promoting the preview to the article.
+
+An alternative opening preview is available through `previews/ema_walkthrough.py`:
+three aligned panels show the 10/30 EMA signal, executed holding periods and
+account equity over the first 256 eligible bars of retained seed 11. It uses the
+common 96-bar warm-up and includes fees, without forcing liquidation at the
+display boundary. Its full-period reference summary is checked against retained
+C++ outputs. Unlike the earlier fictional previews, this uses computed synthetic
+results. Next: review this walkthrough as the lead illustration, with the full
+parameter heatmap reduced to an overview. The manuscript is unchanged pending
+that visual review; no benchmark rerun is needed for this illustration.
 
 Status: implemented four-variant engine, independent reference, sixteen strategy tests and passing debug/sanitizer/release checks. The main scale gate passed 72 untimed workers. The pilot completed 192 timing observations and the main run 576; every output check passed. The draft embeds checked accounts, the traversal schematic, the main timing chart and complete-cost chart. Load rose during both measured runs; this limits interpretation. Barrier evidence is unchanged.
 

@@ -1,6 +1,53 @@
 # Strategy-loop results
 
-## Main campaign
+## Static mechanism inspection
+
+The [mechanism report](../mechanism-check.md) explains the reviewed steady paths
+from the actual measured compiler object. [mechanism-paths.json](mechanism-paths.json)
+retains path instructions, branch assumptions, memory operands and hashes.
+These are static counts and operand bytes, not new timings, hardware counters
+or DRAM traffic. The [account-state illustration](../figures/09-account-state-mechanism.png)
+is derived from that record. Hardware-counter attribution remains open.
+
+## Separate mdspan/manual-indexing check
+
+The [bounded access comparison](../mdspan-check.md), completed 17 November 2026,
+has separate [code/timing evidence](mdspan-summary.json) and
+[all 32 pilot observations](mdspan-pilot-observations.csv). Both complete replay
+functions contain 645 static instructions; addressing and memory operations match.
+The pilot encountered rising background load and does not establish a precise
+overhead percentage. These observations are not pooled with the original
+traversal/layout campaigns below, whose plots and raw archives are unchanged.
+
+## Historical QQQ campaign, 17 November 2026
+
+The current article uses the **384-observation historical main campaign** after
+48 independent untimed checks and a separate 48-observation pilot. Every required
+output passed; the four candidates agreed byte-for-byte at matching workloads.
+Actual power was AC throughout, with main measurement load 1.977–2.140 after
+the quiet entry gate. Keep these observations separate from synthetic runs below.
+
+- [Individual historical observations](historical-observations.csv): all 384,
+  with dataset/profile, execution order, stage times and summary hashes.
+- [Historical summary and provenance](historical-summary.json): 48 candidate/cell
+  groups, absolute min/median/max prepared times, complete medians, all paired
+  timing ratios, input/campaign/analysis hashes and twelve activity cells.
+- [Historical profile/activity figure](../figures/05-historical-profiles.png),
+  [timing ratios](../figures/06-historical-ratios.png),
+  [complete computation](../figures/07-historical-whole.png),
+  [account contours](../figures/08-historical-accounts.png).
+- [Derived account summaries](../figures/historical-accounts.csv) for the
+  predetermined directional/long illustration, including every EMA pair.
+
+Original exports and all campaign evidence remain local. The archive at
+`local/evidence/strategy-loop/historical-20261117/` retains verification,
+separate pilot/main directories, monitoring and all source/build/reference
+snapshots; 1,346 pilot/main copied files were hash checked. Curated exports omit
+local command paths; original manifests remain untouched. No raw market CSV is
+included in these tracked results. See [findings](../findings.md) for limits and
+[benchmark instructions](../benchmark.md) for reproduction.
+
+## Original synthetic main campaign
 
 The main campaign completed all **576 observations** on 16 November 2026 local
 time. Its configuration was frozen after the pilot: same N/K/W and account model,

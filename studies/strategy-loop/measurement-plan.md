@@ -1,5 +1,16 @@
 # Main measurement plan after the pilot
 
+The historical extension has its own [completed protocol](historical-plan.md)
+and `configs/historical-{pilot,main}.json`. The text below records the original
+synthetic campaign; its observations are never pooled with historical timings.
+
+Protocol variation, 17 November: following explicit author authorization, a
+separate reproduction used `--allow-battery` and temporary local evidence output.
+The frozen workload matrix and counts were unchanged. The runner records power
+policy and actual power samples; AC remains its default. This battery campaign
+completed all 576 observations with low recorded load. Keep it separately
+identified from the original AC plan below; see findings for the comparison.
+
 Status: frozen before execution and completed, 16 November 2026. All 576
 observations passed output checks. The quiet entry gate passed after about four
 minutes, but load rose during measurement; see `findings.md` for interpretation.

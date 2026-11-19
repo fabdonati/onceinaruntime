@@ -1,0 +1,547 @@
+{
+  "kind": "mdspan/manual indexing code inspection and descriptive pilot",
+  "date": "2026-11-17",
+  "revision": "c71d6dc270f4a0c8c5e9af108b198114c192ea43",
+  "dirty": true,
+  "compiler": "GCC 16.2.0 / libstdc++",
+  "machine": "Apple M3, arm64, macOS 15.6.1",
+  "flags": [
+    "-O3",
+    "-DNDEBUG",
+    "-std=c++23",
+    "-fno-fast-math",
+    "-ffp-contract=off"
+  ],
+  "workload": {
+    "profile": "directional",
+    "bars": 32768,
+    "windows": 48,
+    "configs": 1128,
+    "warmup": 96,
+    "capital": 1000.0,
+    "fee": 0.0001
+  },
+  "dataset_sha256": "a6a67f5590aad05b926864ccf116e477c53cc26c080ee17b80ebfe110ad5b7c4",
+  "reference_sha256": "12e567cd2dc2f43659980365b75e8480ddb2b360c9169c6918fca3556959a12e",
+  "source_archive_sha256": "d61a49ac709f7b6a273ceb42d2cac9ff078a96e755f112c8d9700ff4df12e82a",
+  "artifacts": {
+    "mdspan": "8b964006f87411ceb5bb814945f96942e8ea885e85c85990a2c92486d47f2057",
+    "mdspan.o": "7b875f7c0a55018d323e4f9f75dc63fbd380fd5ffcfab92bbc54ee041ab4b9eb",
+    "manual": "60b230ec2b61c22d5f0d96f7ca4a79a91a9f399235fc1328d781eda84606faba",
+    "manual.o": "aa0de4baa77932003629f6478034fdfe846b7784ec88b4f3197a80c0baa55e2a"
+  },
+  "code_comparison": {
+    "object_bytes_equal": false,
+    "instruction_counts": {
+      "mdspan": 645,
+      "manual": 645
+    },
+    "mnemonic_counts": {
+      "mdspan": {
+        "ldp": 26,
+        "mov": 14,
+        "cbnz": 3,
+        "cbz": 4,
+        "add": 81,
+        "fmov": 9,
+        "nop": 3,
+        "ldr": 67,
+        "cmp": 26,
+        "b.hs": 5,
+        "mul": 4,
+        "sub": 9,
+        "fcmpe": 31,
+        "b.gt": 7,
+        "fcmp": 19,
+        "b.eq": 23,
+        "fmul": 68,
+        "fsub": 23,
+        "movi": 21,
+        "uzp1.2d": 19,
+        "fadd.2d": 19,
+        "fadd": 18,
+        "fcsel": 22,
+        "fdiv": 18,
+        "b": 24,
+        "b.ne": 17,
+        "str": 32,
+        "stur": 14,
+        "b.mi": 2,
+        "madd": 4,
+        "stp": 10,
+        "ret": 3
+      },
+      "manual": {
+        "ldp": 26,
+        "mov": 14,
+        "cbnz": 3,
+        "cbz": 4,
+        "add": 81,
+        "fmov": 9,
+        "nop": 3,
+        "ldr": 67,
+        "cmp": 26,
+        "b.hs": 5,
+        "mul": 4,
+        "sub": 9,
+        "fcmpe": 31,
+        "b.gt": 7,
+        "fcmp": 19,
+        "b.eq": 23,
+        "fmul": 68,
+        "fsub": 23,
+        "movi": 21,
+        "uzp1.2d": 19,
+        "fadd.2d": 19,
+        "fadd": 18,
+        "fcsel": 22,
+        "fdiv": 18,
+        "b": 24,
+        "b.ne": 17,
+        "str": 32,
+        "stur": 14,
+        "b.mi": 2,
+        "madd": 4,
+        "stp": 10,
+        "ret": 3
+      }
+    },
+    "same_instruction_addresses": true,
+    "differences": [
+      {
+        "mdspan": {
+          "address": "d30",
+          "encoding": "1e712050",
+          "assembly": "fcmpe\td2, d17"
+        },
+        "manual": {
+          "address": "d30",
+          "encoding": "1e622230",
+          "assembly": "fcmpe\td17, d2"
+        }
+      },
+      {
+        "mdspan": {
+          "address": "d34",
+          "encoding": "1e71cc51",
+          "assembly": "fcsel\td17, d2, d17, gt"
+        },
+        "manual": {
+          "address": "d34",
+          "encoding": "1e714c51",
+          "assembly": "fcsel\td17, d2, d17, mi"
+        }
+      },
+      {
+        "mdspan": {
+          "address": "d48",
+          "encoding": "eb01007f",
+          "assembly": "cmp\tx3, x1"
+        },
+        "manual": {
+          "address": "d48",
+          "encoding": "eb03003f",
+          "assembly": "cmp\tx1, x3"
+        }
+      },
+      {
+        "mdspan": {
+          "address": "f80",
+          "encoding": "1e750b67",
+          "assembly": "fmul\td7, d27, d21"
+        },
+        "manual": {
+          "address": "f80",
+          "encoding": "1e7b0aa7",
+          "assembly": "fmul\td7, d21, d27"
+        }
+      },
+      {
+        "mdspan": {
+          "address": "104c",
+          "encoding": "eb01007f",
+          "assembly": "cmp\tx3, x1"
+        },
+        "manual": {
+          "address": "104c",
+          "encoding": "eb03003f",
+          "assembly": "cmp\tx1, x3"
+        }
+      },
+      {
+        "mdspan": {
+          "address": "1120",
+          "encoding": "eb01007f",
+          "assembly": "cmp\tx3, x1"
+        },
+        "manual": {
+          "address": "1120",
+          "encoding": "eb03003f",
+          "assembly": "cmp\tx1, x3"
+        }
+      },
+      {
+        "mdspan": {
+          "address": "128c",
+          "encoding": "1e760800",
+          "assembly": "fmul\td0, d0, d22"
+        },
+        "manual": {
+          "address": "128c",
+          "encoding": "1e600ac0",
+          "assembly": "fmul\td0, d22, d0"
+        }
+      },
+      {
+        "mdspan": {
+          "address": "12f8",
+          "encoding": "1e770817",
+          "assembly": "fmul\td23, d0, d23"
+        },
+        "manual": {
+          "address": "12f8",
+          "encoding": "1e600af7",
+          "assembly": "fmul\td23, d23, d0"
+        }
+      },
+      {
+        "mdspan": {
+          "address": "14e0",
+          "encoding": "1e7b0af7",
+          "assembly": "fmul\td23, d23, d27"
+        },
+        "manual": {
+          "address": "14e0",
+          "encoding": "1e770b77",
+          "assembly": "fmul\td23, d27, d23"
+        }
+      },
+      {
+        "mdspan": {
+          "address": "14f0",
+          "encoding": "1e7a22f0",
+          "assembly": "fcmpe\td23, d26"
+        },
+        "manual": {
+          "address": "14f0",
+          "encoding": "1e772350",
+          "assembly": "fcmpe\td26, d23"
+        }
+      },
+      {
+        "mdspan": {
+          "address": "14f4",
+          "encoding": "1e7acefa",
+          "assembly": "fcsel\td26, d23, d26, gt"
+        },
+        "manual": {
+          "address": "14f4",
+          "encoding": "1e7a4efa",
+          "assembly": "fcsel\td26, d23, d26, mi"
+        }
+      }
+    ]
+  },
+  "untimed_checks": 8,
+  "timed_observations": 32,
+  "power": "AC",
+  "quiet_wait_seconds": 120.24344075005502,
+  "measurement_load_range": [
+    3.2861328125,
+    9.66943359375
+  ],
+  "groups": [
+    {
+      "order": "strategy",
+      "layout": "history",
+      "prepared_ns": {
+        "mdspan": {
+          "observations": [
+            32695000,
+            32914000,
+            32261000,
+            32102000
+          ],
+          "median": 32478000.0,
+          "minimum": 32102000,
+          "maximum": 32914000
+        },
+        "manual": {
+          "observations": [
+            31922000,
+            33681000,
+            32076000,
+            32047000
+          ],
+          "median": 32061500.0,
+          "minimum": 31922000,
+          "maximum": 33681000
+        }
+      },
+      "replay_ns": {
+        "mdspan": {
+          "observations": [
+            32689000,
+            32890000,
+            32257000,
+            32094000
+          ],
+          "median": 32473000.0,
+          "minimum": 32094000,
+          "maximum": 32890000
+        },
+        "manual": {
+          "observations": [
+            31917000,
+            33657000,
+            32070000,
+            32043000
+          ],
+          "median": 32056500.0,
+          "minimum": 31917000,
+          "maximum": 33657000
+        }
+      },
+      "paired_mdspan_over_manual": {
+        "prepared_ns": {
+          "observations": [
+            1.0242152747321596,
+            0.9772275169977138,
+            1.0057675520638483,
+            1.001716229288233
+          ],
+          "median": 1.0037418906760407
+        },
+        "replay_ns": {
+          "observations": [
+            1.024187736942695,
+            0.977211278485902,
+            1.0058309946990958,
+            1.0015916112723529
+          ],
+          "median": 1.0037113029857243
+        }
+      }
+    },
+    {
+      "order": "event",
+      "layout": "history",
+      "prepared_ns": {
+        "mdspan": {
+          "observations": [
+            80012000,
+            80521000,
+            81376000,
+            83660000
+          ],
+          "median": 80948500.0,
+          "minimum": 80012000,
+          "maximum": 83660000
+        },
+        "manual": {
+          "observations": [
+            81299000,
+            80475000,
+            84275000,
+            82723000
+          ],
+          "median": 82011000.0,
+          "minimum": 80475000,
+          "maximum": 84275000
+        }
+      },
+      "replay_ns": {
+        "mdspan": {
+          "observations": [
+            79998000,
+            80511000,
+            81367000,
+            83639000
+          ],
+          "median": 80939000.0,
+          "minimum": 79998000,
+          "maximum": 83639000
+        },
+        "manual": {
+          "observations": [
+            81285000,
+            80455000,
+            84266000,
+            82719000
+          ],
+          "median": 82002000.0,
+          "minimum": 80455000,
+          "maximum": 84266000
+        }
+      },
+      "paired_mdspan_over_manual": {
+        "prepared_ns": {
+          "observations": [
+            0.9841695469808976,
+            1.0005716060888474,
+            0.9656007119549095,
+            1.0113269586451168
+          ],
+          "median": 0.9923705765348725
+        },
+        "replay_ns": {
+          "observations": [
+            0.9841668204465769,
+            1.0006960412653036,
+            0.9655970379512496,
+            1.0111219913200111
+          ],
+          "median": 0.9924314308559403
+        }
+      }
+    },
+    {
+      "order": "strategy",
+      "layout": "snapshot",
+      "prepared_ns": {
+        "mdspan": {
+          "observations": [
+            59777000,
+            62617000,
+            65079000,
+            57495000
+          ],
+          "median": 61197000.0,
+          "minimum": 57495000,
+          "maximum": 65079000
+        },
+        "manual": {
+          "observations": [
+            57873000,
+            61695000,
+            57672000,
+            58884000
+          ],
+          "median": 58378500.0,
+          "minimum": 57672000,
+          "maximum": 61695000
+        }
+      },
+      "replay_ns": {
+        "mdspan": {
+          "observations": [
+            59765000,
+            62608000,
+            65057000,
+            57487000
+          ],
+          "median": 61186500.0,
+          "minimum": 57487000,
+          "maximum": 65057000
+        },
+        "manual": {
+          "observations": [
+            57864000,
+            61685000,
+            57660000,
+            58860000
+          ],
+          "median": 58362000.0,
+          "minimum": 57660000,
+          "maximum": 61685000
+        }
+      },
+      "paired_mdspan_over_manual": {
+        "prepared_ns": {
+          "observations": [
+            1.032899625041038,
+            1.014944484966367,
+            1.1284332084893882,
+            0.9764112492357856
+          ],
+          "median": 1.0239220550037025
+        },
+        "replay_ns": {
+          "observations": [
+            1.0328528964468409,
+            1.0149631190727082,
+            1.1282865071106487,
+            0.976673462453279
+          ],
+          "median": 1.0239080077597746
+        }
+      }
+    },
+    {
+      "order": "event",
+      "layout": "snapshot",
+      "prepared_ns": {
+        "mdspan": {
+          "observations": [
+            44842000,
+            46258000,
+            43319000,
+            43822000
+          ],
+          "median": 44332000.0,
+          "minimum": 43319000,
+          "maximum": 46258000
+        },
+        "manual": {
+          "observations": [
+            43491000,
+            44755000,
+            43540000,
+            43478000
+          ],
+          "median": 43515500.0,
+          "minimum": 43478000,
+          "maximum": 44755000
+        }
+      },
+      "replay_ns": {
+        "mdspan": {
+          "observations": [
+            44672000,
+            46250000,
+            43316000,
+            43804000
+          ],
+          "median": 44238000.0,
+          "minimum": 43316000,
+          "maximum": 46250000
+        },
+        "manual": {
+          "observations": [
+            43485000,
+            44691000,
+            43533000,
+            43474000
+          ],
+          "median": 43509000.0,
+          "minimum": 43474000,
+          "maximum": 44691000
+        }
+      },
+      "paired_mdspan_over_manual": {
+        "prepared_ns": {
+          "observations": [
+            1.0310638982778046,
+            1.0335828399061557,
+            0.9949242076251723,
+            1.007912047472285
+          ],
+          "median": 1.0194879728750448
+        },
+        "replay_ns": {
+          "observations": [
+            1.0272967690008048,
+            1.0348839811147659,
+            0.9950152757678083,
+            1.0075907438929015
+          ],
+          "median": 1.0174437564468533
+        }
+      }
+    }
+  ],
+  "raw_manifest_sha256": "c14c5a0dbb09171847872621967adf2630b7ca725fb196166776dd5e66a29939",
+  "export_sha256": "376fdd8867269bfbd83e2a91b93ba588d7b25f6f831b3c1abadd8c1b61b2fb05",
+  "interpretation": "No added feature-address or memory instructions in this compiled replay; all 11 instruction differences are operand swaps/adjusted comparisons. Pilot is descriptive and noisy; no numerical equivalence or universal zero-overhead claim.",
+  "prior_attempt": "Eight untimed workers passed; zero timing workers. Entry guard rejected finishing charge on AC. Retained separately; parser fixed and regression-tested."
+}

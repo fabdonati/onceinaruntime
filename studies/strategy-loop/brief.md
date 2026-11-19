@@ -1,15 +1,28 @@
 # Strategy-loop investigation brief
 
-Status, 16 November 2026: the accounting reference, four C++23 replay variants,
-full-trace fixtures and larger untimed summary checks pass. The accounting
-defaults below are implemented. A bounded synthetic timing pilot is frozen in
-[configs/pilot.json](configs/pilot.json) completed all 192 observations after an
-initial launch was held at the load gate. A separate frozen
-[main matrix](configs/main.json) completed 576 observations after its quiet entry
-gate passed. Background load rose during both runs; report the resulting limits.
-The current study uses identified synthetic input and no historical-market data.
+Status, 17 November 2026: the original synthetic investigation and the bounded
+historical extension are complete. The supplied Alpaca QQQ one-minute SIP export
+was audited and reduced to regular sessions; three price-selected profiles each
+supply 4,096 and 32,768 bars. All debug and historical excerpt checks passed,
+followed by 48 untimed workers, 48 pilot observations and 384 main observations.
+The unchanged C++23 engine produced identical required outputs across variants.
+See [findings](findings.md) for exact measurements and separate AC/battery conditions.
+
+The separately selected [mdspan access check](mdspan-check.md) is also complete:
+the generated replay has no added addressing or memory instructions relative
+to manual offsets. Correctness gates pass; a noisy 32-observation pilot does
+not establish a precise timing difference. The original campaign is preserved.
+
+The selected [mechanism check](mechanism-check.md) has completed static analysis:
+state-register use, memory operands, addressing and branch paths differ. Counter
+profiling is unavailable through the checked setup; runtime attribution remains
+open. This adds a scoped explanation, without new timings or C++ engine changes.
 
 ## Question and contribution
+
+The [historical protocol](historical-plan.md) records the frozen selection rule,
+account activity metrics and timing matrix. Market prices broaden input coverage;
+they do not make the simplified account model an executable profitability test.
 
 For independent long/cash EMA-cross configurations, compare strategy-first and
 event-first traversal crossed with history-contiguous and snapshot-contiguous
@@ -74,8 +87,8 @@ both physical mappings. Check feature identities independently before replays.
 Logical feature shape is [bar, window]. `layout_left` has offsets t+N*w;
 `layout_right` has t*W+w. Materialize buffers to match their mappings. Ownership
 and view lifetime remain explicit; changing a view does not transpose data.
-The checked example is [examples/layout.cpp](examples/layout.cpp). The engine
-checks are separate; neither establishes abstraction overhead.
+The checked example is [examples/layout.cpp](examples/layout.cpp). Those original
+engine checks are separate from the subsequent [abstraction comparison](mdspan-check.md).
 
 No market dataset is needed for the initial correctness gate. Select one before
 a historical-return heatmap, and label any larger synthetic performance workload

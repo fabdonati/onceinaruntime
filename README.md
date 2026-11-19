@@ -13,7 +13,7 @@ Articles and subscriptions: [Once in a Runtime](https://onceinaruntime.substack.
 | Study | Working material |
 | --- | --- |
 | [Barrier options and SIMD](studies/barrier-options/README.md) | Checked C++ implementation, measured main study, article draft and prepared float/double extension. |
-| [One market, a thousand strategies](studies/strategy-loop/README.md) | Four checked C++23 variants, independent accounting reference, 192-observation pilot and 576-observation main campaign, charts and complete draft. Host-load limits are documented. |
+| [One market, a thousand strategies](studies/strategy-loop/README.md) | Four checked C++23 variants, independent accounting reference, 384 historical QQQ timing observations, compiler inspection and article draft. The [study results](studies/strategy-loop/results/README.md) also retain the earlier synthetic campaigns. |
 
 Each study's README records its status and next step. Manuscripts on `main` are
 work in progress; their presence does not mean an article has been published.

@@ -1,31 +1,23 @@
 # Once in a Runtime
 
-New ideas and performance claims, put to the test.
+Experiments in C++ performance, numerical software and trading systems.
+Each study includes an article, the code and instructions for running it.
 
-Small investigations into performance, low latency and modern C++, with examples
-from numerical software, quant finance and trading systems. Each study keeps its
-question, implementation, checks, findings, figures and manuscript together.
+[Once in a Runtime on Substack](https://onceinaruntime.substack.com)
 
-Articles and subscriptions: [Once in a Runtime](https://onceinaruntime.substack.com).
+## Articles
 
-## Studies
+| No. | Article draft | Code and reproduction |
+| --- | --- | --- |
+| 01 | [One market, a thousand strategies](studies/01-strategy-loop/article.md) | [Strategy replay](studies/01-strategy-loop/README.md) · [Run guide](studies/01-strategy-loop/benchmark.md) · [Results](studies/01-strategy-loop/results/README.md) |
+| 02 | [When an option disappears, what happens to its SIMD lane?](studies/02-barrier-options/article.md) | [Barrier options](studies/02-barrier-options/README.md) · [Run guide](studies/02-barrier-options/environment.md) · [Results](studies/02-barrier-options/results/README.md) |
 
-| Study | Working material |
-| --- | --- |
-| [Barrier options and SIMD](studies/barrier-options/README.md) | Checked C++ implementation, measured main study, article draft and prepared float/double extension. |
-| [One market, a thousand strategies](studies/strategy-loop/README.md) | Four checked C++23 variants, independent accounting reference, 384 historical QQQ timing observations, compiler inspection and article draft. The [study results](studies/strategy-loop/results/README.md) also retain the earlier synthetic campaigns. |
+## Build and test
 
-Each study's README records its status and next step. Manuscripts on `main` are
-work in progress; their presence does not mean an article has been published.
-Stable folder names are independent of publication order.
-
-## Build and check
-
-The implemented study uses C++20, CMake 3.21+, Make, Python 3.10+, NumPy and
-Matplotlib. Its `<experimental/simd>` interface requires a supporting compiler
-and standard library. The checked local route is GCC 16.2/libstdc++.
-The strategy study uses C++23 `mdspan` and is checked on the local GCC
-route. The barrier implementation remains C++20.
+Run these commands from the repository root. Use CMake 3.21 or newer, Make,
+Python 3.10 or newer, and a compiler with the required library features. The
+presets use GCC 16 and libstdc++. Study 01 needs C++23 `std::mdspan`. Study 02
+uses C++20 and `<experimental/simd>`.
 
 ```sh
 python3 -m venv .venv
@@ -38,40 +30,21 @@ cmake --build --preset sanitize
 ctest --preset sanitize
 ```
 
-Presets select `g++-16` and include both barrier precisions. To use another
-supporting compiler in a fresh build directory, override it, for example
-`cmake --preset debug -DCMAKE_CXX_COMPILER=g++`. The local Python environment is
-used automatically when present; otherwise set `Python3_EXECUTABLE` explicitly.
-Set `OIR_STRATEGY_EXAMPLES=OFF` for a compiler without C++23 `mdspan`; the C++20
-barrier checks remain available. CI enables the strategy study on its Homebrew
-GCC route, while the Linux system-GCC jobs check the barrier study and analysis.
+To select a different compiler, pass `-DCMAKE_CXX_COMPILER=...` when configuring
+a fresh build. Set `-DOIR_STRATEGY_EXAMPLES=OFF` to build only the barrier study
+on a compiler that lacks `mdspan`. CMake uses `.venv/bin/python` when available.
+You can also set `Python3_EXECUTABLE` explicitly.
 
-Only release builds are used for timing. See the
-[barrier reproduction guide](studies/barrier-options/environment.md) and
-[precision run guide](studies/barrier-options/precision/README.md), or the
-[strategy run guide](studies/strategy-loop/benchmark.md).
-CI checks correctness and analysis, without timing campaigns.
+The debug and sanitizer presets check correctness. Use the release builds and
+the linked run guides for timing. CI runs the correctness checks.
 
 ## Publication
 
-- [About](publication/about.md)
-- [Publication introduction draft](publication/introduction.md)
-- [Subscriber welcome and name story](publication/welcome-email.md)
-- [Figure colors and typography](publication/visual-style.json)
+[About](publication/about.md) · [Introduction draft](publication/introduction.md)
+· [Subscriber welcome](publication/welcome-email.md)
 
-The approved About and welcome wording is retained. Updating these files does
-not update Substack automatically. Manuscripts contain explicit unresolved
-passages where evidence or author review is still needed.
-
-## Evidence and maintenance
-
-Track current source, manuscripts, selected figures and compact numeric tables.
-Large raw runs, historical source snapshots, reviews and private research stay
-in ignored local storage. [Barrier result documentation](studies/barrier-options/results/README.md)
-explains the evidence relationship and reproduction limits.
-
-Retired message-replay and batch-lifecycle studies are outside the active build.
-Their source and superseded planning were preserved in one verified local archive
-before removal. Historical measurement manifests were not rewritten.
+The repository includes individual timings, derived tables and figures. Raw
+market prices and full campaign archives are stored separately. See each study's
+results for workload details and measurement limits.
 
 Code is available under the [MIT license](LICENSE).
